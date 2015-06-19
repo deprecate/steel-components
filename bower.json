@@ -17,8 +17,10 @@
   "dependencies": {
     "steel-autocomplete": "metal/steel-autocomplete#master",
     "steel-cell": "metal/steel-cell#master",
+    "steel-dropdown": "metal/steel-dropdown#master",
     "steel-list": "metal/steel-list#master",
     "steel-modal": "metal/steel-modal#master",
+    "steel-sidebar": "metal/steel-sidebar#master",
     "steel-switcher": "metal/steel-switcher#master",
     "steel-tooltip": "metal/steel-tooltip#master",
     "steel-tooltip-menu": "metal/steel-tooltip-menu#master",
