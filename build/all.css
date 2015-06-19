@@ -1,14 +1,19 @@
 
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
+/* Cell
+	 ========================================================================== */
+.cell {
+  -webkit-transition: box-shadow 0.3s ease-in-out;
+  -o-transition: box-shadow 0.3s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out;
+  background: #fff;
+  border-radius: 2px;
+  border: 1px solid rgba(35, 50, 64, 0.12);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); }
+
+.cell:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); }
+
+
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 html {
@@ -1044,16 +1049,6 @@ th {
 .glyphicon-menu-up:before {
   content: "\e260"; }
 
-body {
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  letter-spacing: -0.02rem; }
-
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1153,6 +1148,16 @@ hr {
 
 [role="button"] {
   cursor: pointer; }
+
+body {
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  letter-spacing: -0.02rem; }
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -6104,40 +6109,6 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
-/* Cell
-	 ========================================================================== */
-.cell {
-  -webkit-transition: box-shadow 0.3s ease-in-out;
-  -o-transition: box-shadow 0.3s ease-in-out;
-  transition: box-shadow 0.3s ease-in-out;
-  background: #fff;
-  border-radius: 2px;
-  border: 1px solid rgba(35, 50, 64, 0.12);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); }
-
-.cell:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); }
-
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
 /* List
 	 ========================================================================== */
 .list .list-item {
@@ -6169,16 +6140,6 @@ button.close {
 .list .list-icon {
   margin-left: 3px; }
 
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
 /* Modal
 	 ========================================================================== */
 .modal-dialog {
@@ -6249,16 +6210,57 @@ button.close {
 .modal-footer .btn:last-child {
   margin-right: 0; }
 
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
+/* Sidebar
+	 ========================================================================== */
+.sidebar {
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  width: 208px; }
+
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+
+.sidebar-item {
+  display: block;
+  margin: 2px 0; }
+
+.sidebar-item:first-child {
+  margin-top: 0;
+  padding-top: 16px; }
+
+.sidebar-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 16px; }
+
+.sidebar-link {
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  color: rgba(35, 50, 64, 0.9);
+  display: block;
+  font-size: 13px;
+  padding: 8px 20px;
+  text-decoration: none; }
+
+.sidebar-link:hover {
+  background: rgba(28, 109, 226, 0.05);
+  color: rgba(35, 50, 64, 0.9); }
+
+.sidebar-link-selected,
+.sidebar-link-selected:hover {
+  background: rgba(28, 109, 226, 0.1);
+  color: #1c6de2; }
+
+.sidebar-icon {
+  color: #1c6de2;
+  display: inline-block;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 16px; }
+
 /* Switcher - Off
 	 ========================================================================== */
 .switcher {
@@ -6301,16 +6303,6 @@ button.close {
   margin: 9px auto;
   width: 2px; }
 
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
 /* Tooltip
 	 ========================================================================== */
 .tooltip-inner {
@@ -6328,16 +6320,6 @@ button.close {
 .tooltip-arrow {
   display: none; }
 
-/* Colors
-   ========================================================================== */
-/* Scaffolding
-   ========================================================================== */
-/* Typography
-   ========================================================================== */
-/* Buttons
-   ========================================================================== */
-/* Components
-   ========================================================================== */
 /* Tooltip Menu
 	 ========================================================================== */
 .tooltip-menu {
