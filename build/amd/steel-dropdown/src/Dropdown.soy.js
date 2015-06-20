@@ -74,7 +74,7 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry'], function 
    * @suppress {checkTypes}
    */
   Templates.Dropdown.__deltemplate_s13_1849d840 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="dropdown-menu">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="dropdown-menu">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
   };
   if (goog.DEBUG) {
     Templates.Dropdown.__deltemplate_s13_1849d840.soyTemplateName = 'Templates.Dropdown.__deltemplate_s13_1849d840';

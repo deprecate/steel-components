@@ -2482,445 +2482,6 @@ this.steelNamed = {};
 (function () {
 	'use strict';
 
-	var dom = this.steel.dom;
-
-	/**
-  * Class with static methods responsible for doing browser feature checks.
-  */
-
-	var features = (function () {
-		function features() {
-			babelHelpers.classCallCheck(this, features);
-		}
-
-		babelHelpers.createClass(features, null, [{
-			key: 'checkAttrOrderChange',
-
-			/**
-    * Some browsers (like IE9) change the order of element attributes, when html
-    * is rendered. This method can be used to check if this behavior happens on
-    * the current browser.
-    * @return {boolean}
-    */
-			value: function checkAttrOrderChange() {
-				if (features.attrOrderChange_ === undefined) {
-					var originalContent = '<div data-component="" data-ref=""></div>';
-					var element = document.createElement('div');
-					dom.append(element, originalContent);
-					features.attrOrderChange_ = originalContent !== element.innerHTML;
-				}
-				return features.attrOrderChange_;
-			}
-		}]);
-		return features;
-	})();
-
-	features.attrOrderChange_ = undefined;
-
-	this.steel.features = features;
-}).call(this);
-(function () {
-	'use strict';
-
-	var string = (function () {
-		function string() {
-			babelHelpers.classCallCheck(this, string);
-		}
-
-		babelHelpers.createClass(string, null, [{
-			key: 'collapseBreakingSpaces',
-
-			/**
-    * Removes the breaking spaces from the left and right of the string and
-    * collapses the sequences of breaking spaces in the middle into single spaces.
-    * The original and the result strings render the same way in HTML.
-    * @param {string} str A string in which to collapse spaces.
-    * @return {string} Copy of the string with normalized breaking spaces.
-    */
-			value: function collapseBreakingSpaces(str) {
-				return str.replace(/[\t\r\n ]+/g, ' ').replace(/^[\t\r\n ]+|[\t\r\n ]+$/g, '');
-			}
-		}, {
-			key: 'hashCode',
-
-			/**
-    * Calculates the hashcode for a string. The hashcode value is computed by
-    * the sum algorithm: s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]. A nice
-    * property of using 31 prime is that the multiplication can be replaced by
-    * a shift and a subtraction for better performance: 31*i == (i<<5)-i.
-    * Modern VMs do this sort of optimization automatically.
-    * @param {String} val Target string.
-    * @return {Number} Returns the string hashcode.
-    */
-			value: function hashCode(val) {
-				var hash = 0;
-				for (var i = 0, len = val.length; i < len; i++) {
-					hash = 31 * hash + val.charCodeAt(i);
-					hash %= 4294967296;
-				}
-				return hash;
-			}
-		}, {
-			key: 'replaceInterval',
-
-			/**
-    * Replaces interval into the string with specified value, e.g.
-    * `replaceInterval("abcde", 1, 4, "")` returns "ae".
-    * @param {string} str The input string.
-    * @param {Number} start Start interval position to be replaced.
-    * @param {Number} end End interval position to be replaced.
-    * @param {string} value The value that replaces the specified interval.
-    * @return {string}
-    */
-			value: function replaceInterval(str, start, end, value) {
-				return str.substring(0, start) + value + str.substring(end);
-			}
-		}]);
-		return string;
-	})();
-
-	this.steel.string = string;
-}).call(this);
-(function () {
-	'use strict';
-
-	var core = this.steel.core;
-	var string = this.steel.string;
-
-	var html = (function () {
-		function html() {
-			babelHelpers.classCallCheck(this, html);
-		}
-
-		babelHelpers.createClass(html, null, [{
-			key: 'compress',
-
-			/**
-    * Minifies given HTML source by removing extra white spaces, comments and
-    * other unneeded characters without breaking the content structure. As a
-    * result HTML become smaller in size.
-    * - Contents within <code>, <pre>, <script>, <style>, <textarea> and
-    *   conditional comments tags are preserved.
-    * - Comments are removed.
-    * - Conditional comments are preserved.
-    * - Breaking spaces are collapsed into a single space.
-    * - Unneeded spaces inside tags (around = and before />) are removed.
-    * - Spaces between tags are removed, even from inline-block elements.
-    * - Spaces surrounding tags are removed.
-    * - DOCTYPE declaration is simplified to <!DOCTYPE html>.
-    * - Does not remove default attributes from <script>, <style>, <link>,
-    *   <form>, <input>.
-    * - Does not remove values from boolean tag attributes.
-    * - Does not remove "javascript:" from in-line event handlers.
-    * - Does not remove http:// and https:// protocols.
-    * @param {string} htmlString Input HTML to be compressed.
-    * @return {string} Compressed version of the HTML.
-    */
-			value: function compress(htmlString) {
-				var preserved = {};
-				htmlString = html.preserveBlocks_(htmlString, preserved);
-				htmlString = html.simplifyDoctype_(htmlString);
-				htmlString = html.removeComments_(htmlString);
-				htmlString = html.removeIntertagSpaces_(htmlString);
-				htmlString = html.collapseBreakingSpaces_(htmlString);
-				htmlString = html.removeSpacesInsideTags_(htmlString);
-				htmlString = html.removeSurroundingSpaces_(htmlString);
-				htmlString = html.returnBlocks_(htmlString, preserved);
-				return htmlString.trim();
-			}
-		}, {
-			key: 'collapseBreakingSpaces_',
-
-			/**
-    * Collapses breaking spaces into a single space.
-    * @param {string} htmlString
-    * @return {string}
-    * @protected
-    */
-			value: function collapseBreakingSpaces_(htmlString) {
-				return string.collapseBreakingSpaces(htmlString);
-			}
-		}, {
-			key: 'lookupPossibleTagBoundary_',
-
-			/**
-    * Searches for first occurrence of the specified open tag string pattern
-    * and from that point finds next ">" position, identified as possible tag
-    * end position.
-    * @param {string} htmlString
-    * @param {string} openTag Open tag string pattern without open tag ending
-    *     character, e.g. "<textarea" or "<code".
-    * @return {string}
-    * @protected
-    */
-			value: function lookupPossibleTagBoundary_(htmlString, openTag) {
-				var tagPos = htmlString.indexOf(openTag);
-				if (tagPos > -1) {
-					tagPos += htmlString.substring(tagPos).indexOf('>') + 1;
-				}
-				return tagPos;
-			}
-		}, {
-			key: 'preserveBlocks_',
-
-			/**
-    * Preserves contents inside any <code>, <pre>, <script>, <style>,
-    * <textarea> and conditional comment tags. When preserved, original content
-    * are replaced with an unique generated block id and stored into
-    * `preserved` map.
-    * @param {string} htmlString
-    * @param {Object} preserved Object to preserve the content indexed by an
-    *     unique generated block id.
-    * @return {html} The preserved HTML.
-    * @protected
-    */
-			value: function preserveBlocks_(htmlString, preserved) {
-				htmlString = html.preserveOuterHtml_(htmlString, '<!--[if', '<![endif]-->', preserved);
-				htmlString = html.preserveInnerHtml_(htmlString, '<code', '</code', preserved);
-				htmlString = html.preserveInnerHtml_(htmlString, '<pre', '</pre', preserved);
-				htmlString = html.preserveInnerHtml_(htmlString, '<script', '</script', preserved);
-				htmlString = html.preserveInnerHtml_(htmlString, '<style', '</style', preserved);
-				htmlString = html.preserveInnerHtml_(htmlString, '<textarea', '</textarea', preserved);
-				return htmlString;
-			}
-		}, {
-			key: 'preserveInnerHtml_',
-
-			/**
-    * Preserves inner contents inside the specified tag. When preserved,
-    * original content are replaced with an unique generated block id and
-    * stored into `preserved` map.
-    * @param {string} htmlString
-    * @param {string} openTag Open tag string pattern without open tag ending
-    *     character, e.g. "<textarea" or "<code".
-    * @param {string} closeTag Close tag string pattern without close tag
-    *     ending character, e.g. "</textarea" or "</code".
-    * @param {Object} preserved Object to preserve the content indexed by an
-    *     unique generated block id.
-    * @return {html} The preserved HTML.
-    * @protected
-    */
-			value: function preserveInnerHtml_(htmlString, openTag, closeTag, preserved) {
-				var tagPosEnd = html.lookupPossibleTagBoundary_(htmlString, openTag);
-				while (tagPosEnd > -1) {
-					var tagEndPos = htmlString.indexOf(closeTag);
-					htmlString = html.preserveInterval_(htmlString, tagPosEnd, tagEndPos, preserved);
-					htmlString = htmlString.replace(openTag, '%%%~1~%%%');
-					htmlString = htmlString.replace(closeTag, '%%%~2~%%%');
-					tagPosEnd = html.lookupPossibleTagBoundary_(htmlString, openTag);
-				}
-				htmlString = htmlString.replace(/%%%~1~%%%/g, openTag);
-				htmlString = htmlString.replace(/%%%~2~%%%/g, closeTag);
-				return htmlString;
-			}
-		}, {
-			key: 'preserveInterval_',
-
-			/**
-    * Preserves interval of the specified HTML into the preserved map replacing
-    * original contents with an unique generated id.
-    * @param {string} htmlString
-    * @param {Number} start Start interval position to be replaced.
-    * @param {Number} end End interval position to be replaced.
-    * @param {Object} preserved Object to preserve the content indexed by an
-    *     unique generated block id.
-    * @return {string} The HTML with replaced interval.
-    * @protected
-    */
-			value: function preserveInterval_(htmlString, start, end, preserved) {
-				var blockId = '%%%~BLOCK~' + core.getUid() + '~%%%';
-				preserved[blockId] = htmlString.substring(start, end);
-				return string.replaceInterval(htmlString, start, end, blockId);
-			}
-		}, {
-			key: 'preserveOuterHtml_',
-
-			/**
-    * Preserves outer contents inside the specified tag. When preserved,
-    * original content are replaced with an unique generated block id and
-    * stored into `preserved` map.
-    * @param {string} htmlString
-    * @param {string} openTag Open tag string pattern without open tag ending
-    *     character, e.g. "<textarea" or "<code".
-    * @param {string} closeTag Close tag string pattern without close tag
-    *     ending character, e.g. "</textarea" or "</code".
-    * @param {Object} preserved Object to preserve the content indexed by an
-    *     unique generated block id.
-    * @return {html} The preserved HTML.
-    * @protected
-    */
-			value: function preserveOuterHtml_(htmlString, openTag, closeTag, preserved) {
-				var tagPos = htmlString.indexOf(openTag);
-				while (tagPos > -1) {
-					var tagEndPos = htmlString.indexOf(closeTag) + closeTag.length;
-					htmlString = html.preserveInterval_(htmlString, tagPos, tagEndPos, preserved);
-					tagPos = htmlString.indexOf(openTag);
-				}
-				return htmlString;
-			}
-		}, {
-			key: 'removeComments_',
-
-			/**
-    * Removes all comments of the HTML. Including conditional comments and
-    * "<![CDATA[" blocks.
-    * @param {string} htmlString
-    * @return {string} The HTML without comments.
-    * @protected
-    */
-			value: function removeComments_(htmlString) {
-				var preserved = {};
-				htmlString = html.preserveOuterHtml_(htmlString, '<![CDATA[', ']]>', preserved);
-				htmlString = html.preserveOuterHtml_(htmlString, '<!--', '-->', preserved);
-				htmlString = html.replacePreservedBlocks_(htmlString, preserved, '');
-				return htmlString;
-			}
-		}, {
-			key: 'removeIntertagSpaces_',
-
-			/**
-    * Removes spaces between tags, even from inline-block elements.
-    * @param {string} htmlString
-    * @return {string} The HTML without spaces between tags.
-    * @protected
-    */
-			value: function removeIntertagSpaces_(htmlString) {
-				htmlString = htmlString.replace(html.Patterns.INTERTAG_CUSTOM_CUSTOM, '~%%%%%%~');
-				htmlString = htmlString.replace(html.Patterns.INTERTAG_CUSTOM_TAG, '~%%%<');
-				htmlString = htmlString.replace(html.Patterns.INTERTAG_TAG, '><');
-				htmlString = htmlString.replace(html.Patterns.INTERTAG_TAG_CUSTOM, '>%%%~');
-				return htmlString;
-			}
-		}, {
-			key: 'removeSpacesInsideTags_',
-
-			/**
-    * Removes spaces inside tags.
-    * @param {string} htmlString
-    * @return {string} The HTML without spaces inside tags.
-    * @protected
-    */
-			value: function removeSpacesInsideTags_(htmlString) {
-				htmlString = htmlString.replace(html.Patterns.TAG_END_SPACES, '$1$2');
-				htmlString = htmlString.replace(html.Patterns.TAG_QUOTE_SPACES, '=$1$2$3');
-				return htmlString;
-			}
-		}, {
-			key: 'removeSurroundingSpaces_',
-
-			/**
-    * Removes spaces surrounding tags.
-    * @param {string} htmlString
-    * @return {string} The HTML without spaces surrounding tags.
-    * @protected
-    */
-			value: function removeSurroundingSpaces_(htmlString) {
-				return htmlString.replace(html.Patterns.SURROUNDING_SPACES, '$1');
-			}
-		}, {
-			key: 'replacePreservedBlocks_',
-
-			/**
-    * Restores preserved map keys inside the HTML. Note that the passed HTML
-    * should contain the unique generated block ids to be replaced.
-    * @param {string} htmlString
-    * @param {Object} preserved Object to preserve the content indexed by an
-    *     unique generated block id.
-    * @param {string} replaceValue The value to replace any block id inside the
-    * HTML.
-    * @return {string}
-    * @protected
-    */
-			value: function replacePreservedBlocks_(htmlString, preserved, replaceValue) {
-				for (var blockId in preserved) {
-					htmlString = htmlString.replace(blockId, replaceValue);
-				}
-				return htmlString;
-			}
-		}, {
-			key: 'simplifyDoctype_',
-
-			/**
-    * Simplifies DOCTYPE declaration to <!DOCTYPE html>.
-    * @param {string} htmlString
-    * @return {string}
-    * @protected
-    */
-			value: function simplifyDoctype_(htmlString) {
-				var preserved = {};
-				htmlString = html.preserveOuterHtml_(htmlString, '<!DOCTYPE', '>', preserved);
-				htmlString = html.replacePreservedBlocks_(htmlString, preserved, '<!DOCTYPE html>');
-				return htmlString;
-			}
-		}, {
-			key: 'returnBlocks_',
-
-			/**
-    * Restores preserved map original contents inside the HTML. Note that the
-    * passed HTML should contain the unique generated block ids to be restored.
-    * @param {string} htmlString
-    * @param {Object} preserved Object to preserve the content indexed by an
-    *     unique generated block id.
-    * @return {string}
-    * @protected
-    */
-			value: function returnBlocks_(htmlString, preserved) {
-				for (var blockId in preserved) {
-					htmlString = htmlString.replace(blockId, preserved[blockId]);
-				}
-				return htmlString;
-			}
-		}]);
-		return html;
-	})();
-
-	/**
-  * HTML regex patterns.
-  * @enum {RegExp}
-  * @protected
-  */
-	html.Patterns = {
-		/**
-   * @type {RegExp}
-   */
-		INTERTAG_CUSTOM_CUSTOM: /~%%%\s+%%%~/g,
-
-		/**
-   * @type {RegExp}
-   */
-		INTERTAG_TAG_CUSTOM: />\s+%%%~/g,
-
-		/**
-   * @type {RegExp}
-   */
-		INTERTAG_CUSTOM_TAG: /~%%%\s+</g,
-
-		/**
-   * @type {RegExp}
-   */
-		INTERTAG_TAG: />\s+</g,
-
-		/**
-   * @type {RegExp}
-   */
-		SURROUNDING_SPACES: /\s*(<[^>]+>)\s*/g,
-
-		/**
-   * @type {RegExp}
-   */
-		TAG_END_SPACES: /(<(?:[^>]+?))(?:\s+?)(\/?>)/g,
-
-		/**
-   * @type {RegExp}
-   */
-		TAG_QUOTE_SPACES: /\s*=\s*(["']?)\s*(.*?)\s*(\1)/g
-	};
-
-	this.steel.html = html;
-}).call(this);
-(function () {
-	'use strict';
-
 	var core = this.steel.core;
 	var Disposable = this.steel.Disposable;
 	var EventHandle = this.steel.EventHandle;
@@ -3638,7 +3199,7 @@ this.steelNamed = {};
 			value: function addAttrsFromStaticHint_(config) {
 				var ctor = this.constructor;
 				var defineContext = false;
-				if (core.mergeSuperClassesProperty(ctor, 'ATTRS', this.mergeAttrs_)) {
+				if (Attribute.mergeAttrsStatic(ctor)) {
 					defineContext = ctor.prototype;
 				}
 				this.addAttrs(ctor.ATTRS_MERGED, config, defineContext);
@@ -3900,18 +3461,6 @@ this.steelNamed = {};
 				info.state = Attribute.States.INITIALIZED;
 			}
 		}, {
-			key: 'mergeAttrs_',
-
-			/**
-    * Merges an array of values for the ATTRS property into a single object.
-    * @param {!Array} values The values to be merged.
-    * @return {!Object} The merged value.
-    * @protected
-    */
-			value: function mergeAttrs_(values) {
-				return object.mixin.apply(null, [{}].concat(values.reverse()));
-			}
-		}, {
 			key: 'mergeInvalidAttrs_',
 
 			/**
@@ -4083,6 +3632,31 @@ this.steelNamed = {};
 
 				return info.state === Attribute.States.INITIALIZING_DEFAULT || this.callValidator_(name, value);
 			}
+		}], [{
+			key: 'mergeAttrs_',
+
+			/**
+    * Merges an array of values for the ATTRS property into a single object.
+    * @param {!Array} values The values to be merged.
+    * @return {!Object} The merged value.
+    * @static
+    * @protected
+    */
+			value: function mergeAttrs_(values) {
+				return object.mixin.apply(null, [{}].concat(values.reverse()));
+			}
+		}, {
+			key: 'mergeAttrsStatic',
+
+			/**
+    * Merges the ATTRS static variable for the given constructor function.
+    * @param  {!Function} ctor Constructor function.
+    * @return {boolean} Returns true if merge happens, false otherwise.
+    * @static
+    */
+			value: function mergeAttrsStatic(ctor) {
+				return core.mergeSuperClassesProperty(ctor, 'ATTRS', Attribute.mergeAttrs_);
+			}
 		}]);
 		return Attribute;
 	})(EventEmitter);
@@ -4107,6 +3681,445 @@ this.steelNamed = {};
 	};
 
 	this.steel.Attribute = Attribute;
+}).call(this);
+(function () {
+	'use strict';
+
+	var dom = this.steel.dom;
+
+	/**
+  * Class with static methods responsible for doing browser feature checks.
+  */
+
+	var features = (function () {
+		function features() {
+			babelHelpers.classCallCheck(this, features);
+		}
+
+		babelHelpers.createClass(features, null, [{
+			key: 'checkAttrOrderChange',
+
+			/**
+    * Some browsers (like IE9) change the order of element attributes, when html
+    * is rendered. This method can be used to check if this behavior happens on
+    * the current browser.
+    * @return {boolean}
+    */
+			value: function checkAttrOrderChange() {
+				if (features.attrOrderChange_ === undefined) {
+					var originalContent = '<div data-component="" data-ref=""></div>';
+					var element = document.createElement('div');
+					dom.append(element, originalContent);
+					features.attrOrderChange_ = originalContent !== element.innerHTML;
+				}
+				return features.attrOrderChange_;
+			}
+		}]);
+		return features;
+	})();
+
+	features.attrOrderChange_ = undefined;
+
+	this.steel.features = features;
+}).call(this);
+(function () {
+	'use strict';
+
+	var string = (function () {
+		function string() {
+			babelHelpers.classCallCheck(this, string);
+		}
+
+		babelHelpers.createClass(string, null, [{
+			key: 'collapseBreakingSpaces',
+
+			/**
+    * Removes the breaking spaces from the left and right of the string and
+    * collapses the sequences of breaking spaces in the middle into single spaces.
+    * The original and the result strings render the same way in HTML.
+    * @param {string} str A string in which to collapse spaces.
+    * @return {string} Copy of the string with normalized breaking spaces.
+    */
+			value: function collapseBreakingSpaces(str) {
+				return str.replace(/[\t\r\n ]+/g, ' ').replace(/^[\t\r\n ]+|[\t\r\n ]+$/g, '');
+			}
+		}, {
+			key: 'hashCode',
+
+			/**
+    * Calculates the hashcode for a string. The hashcode value is computed by
+    * the sum algorithm: s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]. A nice
+    * property of using 31 prime is that the multiplication can be replaced by
+    * a shift and a subtraction for better performance: 31*i == (i<<5)-i.
+    * Modern VMs do this sort of optimization automatically.
+    * @param {String} val Target string.
+    * @return {Number} Returns the string hashcode.
+    */
+			value: function hashCode(val) {
+				var hash = 0;
+				for (var i = 0, len = val.length; i < len; i++) {
+					hash = 31 * hash + val.charCodeAt(i);
+					hash %= 4294967296;
+				}
+				return hash;
+			}
+		}, {
+			key: 'replaceInterval',
+
+			/**
+    * Replaces interval into the string with specified value, e.g.
+    * `replaceInterval("abcde", 1, 4, "")` returns "ae".
+    * @param {string} str The input string.
+    * @param {Number} start Start interval position to be replaced.
+    * @param {Number} end End interval position to be replaced.
+    * @param {string} value The value that replaces the specified interval.
+    * @return {string}
+    */
+			value: function replaceInterval(str, start, end, value) {
+				return str.substring(0, start) + value + str.substring(end);
+			}
+		}]);
+		return string;
+	})();
+
+	this.steel.string = string;
+}).call(this);
+(function () {
+	'use strict';
+
+	var core = this.steel.core;
+	var string = this.steel.string;
+
+	var html = (function () {
+		function html() {
+			babelHelpers.classCallCheck(this, html);
+		}
+
+		babelHelpers.createClass(html, null, [{
+			key: 'compress',
+
+			/**
+    * Minifies given HTML source by removing extra white spaces, comments and
+    * other unneeded characters without breaking the content structure. As a
+    * result HTML become smaller in size.
+    * - Contents within <code>, <pre>, <script>, <style>, <textarea> and
+    *   conditional comments tags are preserved.
+    * - Comments are removed.
+    * - Conditional comments are preserved.
+    * - Breaking spaces are collapsed into a single space.
+    * - Unneeded spaces inside tags (around = and before />) are removed.
+    * - Spaces between tags are removed, even from inline-block elements.
+    * - Spaces surrounding tags are removed.
+    * - DOCTYPE declaration is simplified to <!DOCTYPE html>.
+    * - Does not remove default attributes from <script>, <style>, <link>,
+    *   <form>, <input>.
+    * - Does not remove values from boolean tag attributes.
+    * - Does not remove "javascript:" from in-line event handlers.
+    * - Does not remove http:// and https:// protocols.
+    * @param {string} htmlString Input HTML to be compressed.
+    * @return {string} Compressed version of the HTML.
+    */
+			value: function compress(htmlString) {
+				var preserved = {};
+				htmlString = html.preserveBlocks_(htmlString, preserved);
+				htmlString = html.simplifyDoctype_(htmlString);
+				htmlString = html.removeComments_(htmlString);
+				htmlString = html.removeIntertagSpaces_(htmlString);
+				htmlString = html.collapseBreakingSpaces_(htmlString);
+				htmlString = html.removeSpacesInsideTags_(htmlString);
+				htmlString = html.removeSurroundingSpaces_(htmlString);
+				htmlString = html.returnBlocks_(htmlString, preserved);
+				return htmlString.trim();
+			}
+		}, {
+			key: 'collapseBreakingSpaces_',
+
+			/**
+    * Collapses breaking spaces into a single space.
+    * @param {string} htmlString
+    * @return {string}
+    * @protected
+    */
+			value: function collapseBreakingSpaces_(htmlString) {
+				return string.collapseBreakingSpaces(htmlString);
+			}
+		}, {
+			key: 'lookupPossibleTagBoundary_',
+
+			/**
+    * Searches for first occurrence of the specified open tag string pattern
+    * and from that point finds next ">" position, identified as possible tag
+    * end position.
+    * @param {string} htmlString
+    * @param {string} openTag Open tag string pattern without open tag ending
+    *     character, e.g. "<textarea" or "<code".
+    * @return {string}
+    * @protected
+    */
+			value: function lookupPossibleTagBoundary_(htmlString, openTag) {
+				var tagPos = htmlString.indexOf(openTag);
+				if (tagPos > -1) {
+					tagPos += htmlString.substring(tagPos).indexOf('>') + 1;
+				}
+				return tagPos;
+			}
+		}, {
+			key: 'preserveBlocks_',
+
+			/**
+    * Preserves contents inside any <code>, <pre>, <script>, <style>,
+    * <textarea> and conditional comment tags. When preserved, original content
+    * are replaced with an unique generated block id and stored into
+    * `preserved` map.
+    * @param {string} htmlString
+    * @param {Object} preserved Object to preserve the content indexed by an
+    *     unique generated block id.
+    * @return {html} The preserved HTML.
+    * @protected
+    */
+			value: function preserveBlocks_(htmlString, preserved) {
+				htmlString = html.preserveOuterHtml_(htmlString, '<!--[if', '<![endif]-->', preserved);
+				htmlString = html.preserveInnerHtml_(htmlString, '<code', '</code', preserved);
+				htmlString = html.preserveInnerHtml_(htmlString, '<pre', '</pre', preserved);
+				htmlString = html.preserveInnerHtml_(htmlString, '<script', '</script', preserved);
+				htmlString = html.preserveInnerHtml_(htmlString, '<style', '</style', preserved);
+				htmlString = html.preserveInnerHtml_(htmlString, '<textarea', '</textarea', preserved);
+				return htmlString;
+			}
+		}, {
+			key: 'preserveInnerHtml_',
+
+			/**
+    * Preserves inner contents inside the specified tag. When preserved,
+    * original content are replaced with an unique generated block id and
+    * stored into `preserved` map.
+    * @param {string} htmlString
+    * @param {string} openTag Open tag string pattern without open tag ending
+    *     character, e.g. "<textarea" or "<code".
+    * @param {string} closeTag Close tag string pattern without close tag
+    *     ending character, e.g. "</textarea" or "</code".
+    * @param {Object} preserved Object to preserve the content indexed by an
+    *     unique generated block id.
+    * @return {html} The preserved HTML.
+    * @protected
+    */
+			value: function preserveInnerHtml_(htmlString, openTag, closeTag, preserved) {
+				var tagPosEnd = html.lookupPossibleTagBoundary_(htmlString, openTag);
+				while (tagPosEnd > -1) {
+					var tagEndPos = htmlString.indexOf(closeTag);
+					htmlString = html.preserveInterval_(htmlString, tagPosEnd, tagEndPos, preserved);
+					htmlString = htmlString.replace(openTag, '%%%~1~%%%');
+					htmlString = htmlString.replace(closeTag, '%%%~2~%%%');
+					tagPosEnd = html.lookupPossibleTagBoundary_(htmlString, openTag);
+				}
+				htmlString = htmlString.replace(/%%%~1~%%%/g, openTag);
+				htmlString = htmlString.replace(/%%%~2~%%%/g, closeTag);
+				return htmlString;
+			}
+		}, {
+			key: 'preserveInterval_',
+
+			/**
+    * Preserves interval of the specified HTML into the preserved map replacing
+    * original contents with an unique generated id.
+    * @param {string} htmlString
+    * @param {Number} start Start interval position to be replaced.
+    * @param {Number} end End interval position to be replaced.
+    * @param {Object} preserved Object to preserve the content indexed by an
+    *     unique generated block id.
+    * @return {string} The HTML with replaced interval.
+    * @protected
+    */
+			value: function preserveInterval_(htmlString, start, end, preserved) {
+				var blockId = '%%%~BLOCK~' + core.getUid() + '~%%%';
+				preserved[blockId] = htmlString.substring(start, end);
+				return string.replaceInterval(htmlString, start, end, blockId);
+			}
+		}, {
+			key: 'preserveOuterHtml_',
+
+			/**
+    * Preserves outer contents inside the specified tag. When preserved,
+    * original content are replaced with an unique generated block id and
+    * stored into `preserved` map.
+    * @param {string} htmlString
+    * @param {string} openTag Open tag string pattern without open tag ending
+    *     character, e.g. "<textarea" or "<code".
+    * @param {string} closeTag Close tag string pattern without close tag
+    *     ending character, e.g. "</textarea" or "</code".
+    * @param {Object} preserved Object to preserve the content indexed by an
+    *     unique generated block id.
+    * @return {html} The preserved HTML.
+    * @protected
+    */
+			value: function preserveOuterHtml_(htmlString, openTag, closeTag, preserved) {
+				var tagPos = htmlString.indexOf(openTag);
+				while (tagPos > -1) {
+					var tagEndPos = htmlString.indexOf(closeTag) + closeTag.length;
+					htmlString = html.preserveInterval_(htmlString, tagPos, tagEndPos, preserved);
+					tagPos = htmlString.indexOf(openTag);
+				}
+				return htmlString;
+			}
+		}, {
+			key: 'removeComments_',
+
+			/**
+    * Removes all comments of the HTML. Including conditional comments and
+    * "<![CDATA[" blocks.
+    * @param {string} htmlString
+    * @return {string} The HTML without comments.
+    * @protected
+    */
+			value: function removeComments_(htmlString) {
+				var preserved = {};
+				htmlString = html.preserveOuterHtml_(htmlString, '<![CDATA[', ']]>', preserved);
+				htmlString = html.preserveOuterHtml_(htmlString, '<!--', '-->', preserved);
+				htmlString = html.replacePreservedBlocks_(htmlString, preserved, '');
+				return htmlString;
+			}
+		}, {
+			key: 'removeIntertagSpaces_',
+
+			/**
+    * Removes spaces between tags, even from inline-block elements.
+    * @param {string} htmlString
+    * @return {string} The HTML without spaces between tags.
+    * @protected
+    */
+			value: function removeIntertagSpaces_(htmlString) {
+				htmlString = htmlString.replace(html.Patterns.INTERTAG_CUSTOM_CUSTOM, '~%%%%%%~');
+				htmlString = htmlString.replace(html.Patterns.INTERTAG_CUSTOM_TAG, '~%%%<');
+				htmlString = htmlString.replace(html.Patterns.INTERTAG_TAG, '><');
+				htmlString = htmlString.replace(html.Patterns.INTERTAG_TAG_CUSTOM, '>%%%~');
+				return htmlString;
+			}
+		}, {
+			key: 'removeSpacesInsideTags_',
+
+			/**
+    * Removes spaces inside tags.
+    * @param {string} htmlString
+    * @return {string} The HTML without spaces inside tags.
+    * @protected
+    */
+			value: function removeSpacesInsideTags_(htmlString) {
+				htmlString = htmlString.replace(html.Patterns.TAG_END_SPACES, '$1$2');
+				htmlString = htmlString.replace(html.Patterns.TAG_QUOTE_SPACES, '=$1$2$3');
+				return htmlString;
+			}
+		}, {
+			key: 'removeSurroundingSpaces_',
+
+			/**
+    * Removes spaces surrounding tags.
+    * @param {string} htmlString
+    * @return {string} The HTML without spaces surrounding tags.
+    * @protected
+    */
+			value: function removeSurroundingSpaces_(htmlString) {
+				return htmlString.replace(html.Patterns.SURROUNDING_SPACES, '$1');
+			}
+		}, {
+			key: 'replacePreservedBlocks_',
+
+			/**
+    * Restores preserved map keys inside the HTML. Note that the passed HTML
+    * should contain the unique generated block ids to be replaced.
+    * @param {string} htmlString
+    * @param {Object} preserved Object to preserve the content indexed by an
+    *     unique generated block id.
+    * @param {string} replaceValue The value to replace any block id inside the
+    * HTML.
+    * @return {string}
+    * @protected
+    */
+			value: function replacePreservedBlocks_(htmlString, preserved, replaceValue) {
+				for (var blockId in preserved) {
+					htmlString = htmlString.replace(blockId, replaceValue);
+				}
+				return htmlString;
+			}
+		}, {
+			key: 'simplifyDoctype_',
+
+			/**
+    * Simplifies DOCTYPE declaration to <!DOCTYPE html>.
+    * @param {string} htmlString
+    * @return {string}
+    * @protected
+    */
+			value: function simplifyDoctype_(htmlString) {
+				var preserved = {};
+				htmlString = html.preserveOuterHtml_(htmlString, '<!DOCTYPE', '>', preserved);
+				htmlString = html.replacePreservedBlocks_(htmlString, preserved, '<!DOCTYPE html>');
+				return htmlString;
+			}
+		}, {
+			key: 'returnBlocks_',
+
+			/**
+    * Restores preserved map original contents inside the HTML. Note that the
+    * passed HTML should contain the unique generated block ids to be restored.
+    * @param {string} htmlString
+    * @param {Object} preserved Object to preserve the content indexed by an
+    *     unique generated block id.
+    * @return {string}
+    * @protected
+    */
+			value: function returnBlocks_(htmlString, preserved) {
+				for (var blockId in preserved) {
+					htmlString = htmlString.replace(blockId, preserved[blockId]);
+				}
+				return htmlString;
+			}
+		}]);
+		return html;
+	})();
+
+	/**
+  * HTML regex patterns.
+  * @enum {RegExp}
+  * @protected
+  */
+	html.Patterns = {
+		/**
+   * @type {RegExp}
+   */
+		INTERTAG_CUSTOM_CUSTOM: /~%%%\s+%%%~/g,
+
+		/**
+   * @type {RegExp}
+   */
+		INTERTAG_TAG_CUSTOM: />\s+%%%~/g,
+
+		/**
+   * @type {RegExp}
+   */
+		INTERTAG_CUSTOM_TAG: /~%%%\s+</g,
+
+		/**
+   * @type {RegExp}
+   */
+		INTERTAG_TAG: />\s+</g,
+
+		/**
+   * @type {RegExp}
+   */
+		SURROUNDING_SPACES: /\s*(<[^>]+>)\s*/g,
+
+		/**
+   * @type {RegExp}
+   */
+		TAG_END_SPACES: /(<(?:[^>]+?))(?:\s+?)(\/?>)/g,
+
+		/**
+   * @type {RegExp}
+   */
+		TAG_QUOTE_SPACES: /\s*=\s*(["']?)\s*(.*?)\s*(\1)/g
+	};
+
+	this.steel.html = html;
 }).call(this);
 (function () {
 	'use strict';
@@ -6129,6 +6142,8 @@ this.steelNamed = {};
 
 	var core = this.steel.core;
 	var dom = this.steel.dom;
+	var object = this.steel.object;
+	var Attribute = this.steel.Attribute;
 	var Component = this.steel.Component;
 
 	/**
@@ -6461,6 +6476,83 @@ this.steelNamed = {};
 				return babelHelpers.get(Object.getPrototypeOf(SoyComponent.prototype), 'valueElementFn_', this).call(this);
 			}
 		}], [{
+			key: 'createComponentFromTemplate',
+
+			/**
+    * Creates and instantiates a component that has the given soy template function as its
+    * main content template. All keys present in the config object, if one is given, will be
+    * attributes of this component, and the object itself will be passed to the constructor.
+    * @param {!function()} templateFn
+    * @param {Object=} opt_config
+    * @return {!SoyComponent}
+    * @static
+    */
+			value: function createComponentFromTemplate(templateFn, opt_config) {
+				var TemplateComponent = (function (_SoyComponent) {
+					function TemplateComponent() {
+						babelHelpers.classCallCheck(this, TemplateComponent);
+
+						if (_SoyComponent != null) {
+							_SoyComponent.apply(this, arguments);
+						}
+					}
+
+					babelHelpers.inherits(TemplateComponent, _SoyComponent);
+					return TemplateComponent;
+				})(SoyComponent);
+
+				TemplateComponent.TEMPLATES = {
+					content: templateFn
+				};
+				TemplateComponent.ATTRS = {};
+				Attribute.mergeAttrsStatic(SoyComponent);
+				Object.keys(opt_config || {}).forEach(function (name) {
+					if (!SoyComponent.ATTRS_MERGED[name]) {
+						TemplateComponent.ATTRS[name] = {};
+					}
+				});
+				return new TemplateComponent(opt_config);
+			}
+		}, {
+			key: 'decorateFromTemplate',
+
+			/**
+    * Decorates html rendered by the given soy template function, instantiating any referenced
+    * components in it.
+    * @param {!function()} templateFn
+    * @param {Element=} opt_element The element that should be decorated. If none is given,
+    *   one will be created and appended to the document body.
+    * @param {Object=} opt_data Data to be passed to the soy template when it's called.
+    * @return {!SoyComponent} The component that was created for this action. Contains
+    *   references to components that were rendered by the given template function.
+    * @static
+    */
+			value: function decorateFromTemplate(templateFn, opt_element, opt_data) {
+				var config = object.mixin({
+					element: opt_element
+				}, opt_data);
+				return SoyComponent.createComponentFromTemplate(templateFn, config).decorate();
+			}
+		}, {
+			key: 'renderFromTemplate',
+
+			/**
+    * Renders the given soy template function, instantiating any referenced components in it.
+    * @param {!function()} templateFn
+    * @param {Element=} opt_element The element where the template should be rendered. If
+    *    none is given, one will be created and appended to the document body.
+    * @param {Object=} opt_data Data to be passed to the soy template when it's called.
+    * @return {!SoyComponent} The component that was created for this action. Contains
+    *   references to components that were rendered by the given template function.
+    * @static
+    */
+			value: function renderFromTemplate(templateFn, opt_element, opt_data) {
+				var config = object.mixin({
+					element: opt_element
+				}, opt_data);
+				return SoyComponent.createComponentFromTemplate(templateFn, config).render();
+			}
+		}, {
 			key: 'sanitizeHtml',
 
 			/**
@@ -7780,7 +7872,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Dropdown.__deltemplate_s13_1849d840 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="dropdown-menu">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="dropdown-menu">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
   };
   if (goog.DEBUG) {
     Templates.Dropdown.__deltemplate_s13_1849d840.soyTemplateName = 'Templates.Dropdown.__deltemplate_s13_1849d840';
@@ -7879,6 +7971,7 @@ this.steelNamed = {};
 
 	var dom = this.steel.dom;
 	var ComponentRegistry = this.steel.ComponentRegistry;
+	var EventHandler = this.steel.EventHandler;
 	var SoyComponent = this.steel.SoyComponent;
 	var JQueryAdapter = this.steel.JQueryAdapter;
 
@@ -7887,23 +7980,49 @@ this.steelNamed = {};
 			babelHelpers.classCallCheck(this, Dropdown);
 
 			babelHelpers.get(Object.getPrototypeOf(Dropdown.prototype), 'constructor', this).call(this, opt_config);
+			this.eventHandler_ = new EventHandler();
 		}
 
 		babelHelpers.inherits(Dropdown, _SoyComponent);
 		babelHelpers.createClass(Dropdown, [{
+			key: 'attached',
+			value: function attached() {
+				babelHelpers.get(Object.getPrototypeOf(Dropdown.prototype), 'attached', this).call(this);
+				this.eventHandler_.add(dom.on(document, 'click', this.handleDocClick_.bind(this)));
+			}
+		}, {
+			key: 'detached',
+			value: function detached() {
+				babelHelpers.get(Object.getPrototypeOf(Dropdown.prototype), 'detached', this).call(this);
+				this.eventHandler_.removeAllListeners();
+			}
+		}, {
 			key: 'close',
 			value: function close() {
 				dom.removeClasses(this.element, 'open');
 			}
 		}, {
+			key: 'isOpen',
+			value: function isOpen() {
+				return dom.hasClass(this.element, 'open');
+			}
+		}, {
+			key: 'handleDocClick_',
+
+			/**
+    * Handles document click in order to hide menu.
+    * @param {Event} event
+    */
+			value: function handleDocClick_(event) {
+				if (this.element.contains(event.target)) {
+					return;
+				}
+				this.close();
+			}
+		}, {
 			key: 'open',
 			value: function open() {
 				dom.addClasses(this.element, 'open');
-			}
-		}, {
-			key: 'toggle',
-			value: function toggle() {
-				dom.toggleClasses(this.element, 'open');
 			}
 		}, {
 			key: 'syncPosition',
@@ -7912,6 +8031,11 @@ this.steelNamed = {};
 					dom.removeClasses(this.element, 'drop' + oldPosition.toLowerCase());
 				}
 				dom.addClasses(this.element, 'drop' + position.toLowerCase());
+			}
+		}, {
+			key: 'toggle',
+			value: function toggle() {
+				dom.toggleClasses(this.element, 'open');
 			}
 		}, {
 			key: 'validatePosition_',
@@ -8912,237 +9036,6 @@ this.steelNamed = {};
   var ComponentRegistry = this.steel.ComponentRegistry;
 
   var Templates = ComponentRegistry.Templates;
-  // This file was automatically generated from TooltipMenu.soy.
-  // Please don't edit this file by hand.
-
-  /**
-   * @fileoverview Templates in namespace Templates.TooltipMenu.
-   * @hassoydeltemplate {TooltipMenu}
-   * @hassoydeltemplate {TooltipMenu.items}
-   * @hassoydelcall {TooltipMenu}
-   * @hassoydelcall {TooltipMenu.items}
-   */
-
-  if (typeof Templates.TooltipMenu == 'undefined') {
-    Templates.TooltipMenu = {};
-  }
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', true)(opt_data, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.content.soyTemplateName = 'Templates.TooltipMenu.content';
-  }
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.items = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var itemList5 = opt_data.content;
-    var itemListLen5 = itemList5.length;
-    for (var itemIndex5 = 0; itemIndex5 < itemListLen5; itemIndex5++) {
-      var itemData5 = itemList5[itemIndex5];
-      output += '<li class="tooltip-menu-item"><a class="tooltip-menu-link" href="' + soy.$$escapeHtmlAttribute(soy.$$filterNormalizeUri(itemData5.href ? itemData5.href : '#')) + '">' + soy.$$escapeHtml(itemData5.content) + '</a></li>';
-    }
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.items.soyTemplateName = 'Templates.TooltipMenu.items';
-  }
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s12_cfc546d2 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<nav id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip-menu ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? opt_data.elementClasses : '') + ' bottom" data-component>' + soy.$$escapeHtml(opt_data.elementContent) + '</nav>');
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s12_cfc546d2.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s12_cfc546d2';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', 0, Templates.TooltipMenu.__deltemplate_s12_cfc546d2);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s20_c0ab3df3 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items" class="tooltip-menu-list">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s20_c0ab3df3.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s20_c0ab3df3';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', 0, Templates.TooltipMenu.__deltemplate_s20_c0ab3df3);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s26_8f8c631d = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s26_8f8c631d.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s26_8f8c631d';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), '', 0, Templates.TooltipMenu.__deltemplate_s26_8f8c631d);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s32_8278e063 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.items(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s32_8278e063.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s32_8278e063';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', 0, Templates.TooltipMenu.__deltemplate_s32_8278e063);
-
-  Templates.TooltipMenu.items.params = ['content'];
-  this.steel.TooltipMenu = {};
-
-  /* jshint ignore:end */
-  this.steel.TooltipMenu.soy = Templates.TooltipMenu;
-}).call(this);
-(function () {
-	'use strict';
-
-	var dom = this.steel.dom;
-	var Tooltip = this.steel.Tooltip;
-	var ComponentRegistry = this.steel.ComponentRegistry;
-	var JQueryAdapter = this.steel.JQueryAdapter;
-
-	/**
-  * TooltipMenu component.
-  */
-
-	var TooltipMenu = (function (_Tooltip) {
-		/**
-   * @inheritDoc
-   */
-
-		function TooltipMenu(opt_config) {
-			babelHelpers.classCallCheck(this, TooltipMenu);
-
-			babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'constructor', this).call(this, opt_config);
-		}
-
-		babelHelpers.inherits(TooltipMenu, _Tooltip);
-		babelHelpers.createClass(TooltipMenu, [{
-			key: 'attached',
-			value: function attached() {
-				babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'attached', this).call(this);
-				this.eventHandler_.add(dom.on(document, 'click', this.handleDocClick_.bind(this)));
-			}
-		}, {
-			key: 'syncContent',
-
-			/**
-    * @inheritDoc
-    */
-			value: function syncContent() {}
-		}, {
-			key: 'handleDocClick_',
-
-			/**
-    * Handles document click in order to hide menu.
-    * @param {Event} event
-    */
-			value: function handleDocClick_(event) {
-				if (this.element.contains(event.target)) {
-					return;
-				}
-				this.visible = false;
-			}
-		}]);
-		return TooltipMenu;
-	})(Tooltip);
-
-	/**
-  * Default tooltip elementClasses.
-  * @default tooltip
-  * @type {String}
-  * @static
-  */
-	TooltipMenu.ELEMENT_CLASSES_MERGED = 'tooltip-menu component';
-
-	/**
-  * TooltipMenu attrbutes definition.
-  * @type {Object}
-  * @static
-  */
-	TooltipMenu.ATTRS = {
-		/**
-   * Delay showing and hiding the menu (ms).
-   * @type {!Array.<number>}
-   * @default [ 0, 0 ]
-   */
-		delay: {
-			validator: Array.isArray,
-			value: [0, 0]
-		},
-
-		/**
-   * Trigger events used to bind handlers to show and hide tooltip.
-   * @type {!Array.<string>}
-   * @default ['click', 'mouseout']
-   */
-		triggerEvents: {
-			validator: Array.isArray,
-			value: ['click', 'click']
-		},
-
-		/**
-   * Items to be placed inside tooltip menu. Each item must contain at least a
-   * label key.
-   * @type {!Array.<!object>}
-   */
-		content: {
-			validator: Array.isArray,
-			valueFn: function valueFn() {
-				return [];
-			}
-		}
-	};
-
-	ComponentRegistry.register('TooltipMenu', TooltipMenu);
-
-	this.steel.TooltipMenu = TooltipMenu;
-	JQueryAdapter.register('tooltipMenu', TooltipMenu);
-}).call(this);
-(function () {
-  /* jshint ignore:start */
-  'use strict';
-
-  var ComponentRegistry = this.steel.ComponentRegistry;
-
-  var Templates = ComponentRegistry.Templates;
   // This file was automatically generated from Treeview.soy.
   // Please don't edit this file by hand.
 
@@ -9461,5 +9354,236 @@ this.steelNamed = {};
   var JQueryAdapter = this.steel.JQueryAdapter;
   this.steel.Treeview = Treeview;
   JQueryAdapter.register('treeview', Treeview);
+}).call(this);
+(function () {
+  /* jshint ignore:start */
+  'use strict';
+
+  var ComponentRegistry = this.steel.ComponentRegistry;
+
+  var Templates = ComponentRegistry.Templates;
+  // This file was automatically generated from TooltipMenu.soy.
+  // Please don't edit this file by hand.
+
+  /**
+   * @fileoverview Templates in namespace Templates.TooltipMenu.
+   * @hassoydeltemplate {TooltipMenu}
+   * @hassoydeltemplate {TooltipMenu.items}
+   * @hassoydelcall {TooltipMenu}
+   * @hassoydelcall {TooltipMenu.items}
+   */
+
+  if (typeof Templates.TooltipMenu == 'undefined') {
+    Templates.TooltipMenu = {};
+  }
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.content = function (opt_data, opt_ignored, opt_ijData) {
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', true)(opt_data, null, opt_ijData));
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.content.soyTemplateName = 'Templates.TooltipMenu.content';
+  }
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.items = function (opt_data, opt_ignored, opt_ijData) {
+    var output = '';
+    var itemList5 = opt_data.content;
+    var itemListLen5 = itemList5.length;
+    for (var itemIndex5 = 0; itemIndex5 < itemListLen5; itemIndex5++) {
+      var itemData5 = itemList5[itemIndex5];
+      output += '<li class="tooltip-menu-item"><a class="tooltip-menu-link" href="' + soy.$$escapeHtmlAttribute(soy.$$filterNormalizeUri(itemData5.href ? itemData5.href : '#')) + '">' + soy.$$escapeHtml(itemData5.content) + '</a></li>';
+    }
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.items.soyTemplateName = 'Templates.TooltipMenu.items';
+  }
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s12_cfc546d2 = function (opt_data, opt_ignored, opt_ijData) {
+    opt_data = opt_data || {};
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<nav id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip-menu ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? opt_data.elementClasses : '') + ' bottom" data-component>' + soy.$$escapeHtml(opt_data.elementContent) + '</nav>');
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s12_cfc546d2.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s12_cfc546d2';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', 0, Templates.TooltipMenu.__deltemplate_s12_cfc546d2);
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s20_c0ab3df3 = function (opt_data, opt_ignored, opt_ijData) {
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items" class="tooltip-menu-list">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s20_c0ab3df3.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s20_c0ab3df3';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', 0, Templates.TooltipMenu.__deltemplate_s20_c0ab3df3);
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s26_8f8c631d = function (opt_data, opt_ignored, opt_ijData) {
+    opt_data = opt_data || {};
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s26_8f8c631d.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s26_8f8c631d';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), '', 0, Templates.TooltipMenu.__deltemplate_s26_8f8c631d);
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s32_8278e063 = function (opt_data, opt_ignored, opt_ijData) {
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.items(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s32_8278e063.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s32_8278e063';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', 0, Templates.TooltipMenu.__deltemplate_s32_8278e063);
+
+  Templates.TooltipMenu.items.params = ['content'];
+  this.steel.TooltipMenu = {};
+
+  /* jshint ignore:end */
+  this.steel.TooltipMenu.soy = Templates.TooltipMenu;
+}).call(this);
+(function () {
+	'use strict';
+
+	var dom = this.steel.dom;
+	var Tooltip = this.steel.Tooltip;
+	var ComponentRegistry = this.steel.ComponentRegistry;
+	var JQueryAdapter = this.steel.JQueryAdapter;
+
+	/**
+  * TooltipMenu component.
+  */
+
+	var TooltipMenu = (function (_Tooltip) {
+		/**
+   * @inheritDoc
+   */
+
+		function TooltipMenu(opt_config) {
+			babelHelpers.classCallCheck(this, TooltipMenu);
+
+			babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'constructor', this).call(this, opt_config);
+		}
+
+		babelHelpers.inherits(TooltipMenu, _Tooltip);
+		babelHelpers.createClass(TooltipMenu, [{
+			key: 'attached',
+			value: function attached() {
+				babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'attached', this).call(this);
+				this.eventHandler_.add(dom.on(document, 'click', this.handleDocClick_.bind(this)));
+			}
+		}, {
+			key: 'syncContent',
+
+			/**
+    * @inheritDoc
+    */
+			value: function syncContent() {}
+		}, {
+			key: 'handleDocClick_',
+
+			/**
+    * Handles document click in order to hide menu.
+    * @param {Event} event
+    */
+			value: function handleDocClick_(event) {
+				if (this.element.contains(event.target)) {
+					return;
+				}
+				this.visible = false;
+			}
+		}]);
+		return TooltipMenu;
+	})(Tooltip);
+
+	/**
+  * Default tooltip elementClasses.
+  * @default tooltip
+  * @type {String}
+  * @static
+  */
+	TooltipMenu.ELEMENT_CLASSES_MERGED = 'tooltip-menu component';
+
+	/**
+  * TooltipMenu attrbutes definition.
+  * @type {Object}
+  * @static
+  */
+	TooltipMenu.ATTRS = {
+		/**
+   * Delay showing and hiding the menu (ms).
+   * @type {!Array.<number>}
+   * @default [ 0, 0 ]
+   */
+		delay: {
+			validator: Array.isArray,
+			value: [0, 0]
+		},
+
+		/**
+   * Trigger events used to bind handlers to show and hide tooltip.
+   * @type {!Array.<string>}
+   * @default ['click', 'mouseout']
+   */
+		triggerEvents: {
+			validator: Array.isArray,
+			value: ['click', 'click']
+		},
+
+		/**
+   * Items to be placed inside tooltip menu. Each item must contain at least a
+   * label key.
+   * @type {!Array.<!object>}
+   */
+		content: {
+			validator: Array.isArray,
+			valueFn: function valueFn() {
+				return [];
+			}
+		}
+	};
+
+	ComponentRegistry.register('TooltipMenu', TooltipMenu);
+
+	this.steel.TooltipMenu = TooltipMenu;
+	JQueryAdapter.register('tooltipMenu', TooltipMenu);
 }).call(this);})();
 //# sourceMappingURL=steel.js.map

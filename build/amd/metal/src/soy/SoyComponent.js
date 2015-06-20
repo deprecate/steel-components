@@ -1,4 +1,4 @@
-define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/component/Component'], function (exports, module, _metalSrcCore, _metalSrcDomDom, _metalSrcComponentComponent) {
+define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/object/object', 'metal/src/attribute/Attribute', 'metal/src/component/Component'], function (exports, module, _metalSrcCore, _metalSrcDomDom, _metalSrcObjectObject, _metalSrcAttributeAttribute, _metalSrcComponentComponent) {
 	'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -14,6 +14,10 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/c
 	var _core = _interopRequireDefault(_metalSrcCore);
 
 	var _dom = _interopRequireDefault(_metalSrcDomDom);
+
+	var _object = _interopRequireDefault(_metalSrcObjectObject);
+
+	var _Attribute = _interopRequireDefault(_metalSrcAttributeAttribute);
 
 	var _Component2 = _interopRequireDefault(_metalSrcComponentComponent);
 
@@ -348,6 +352,84 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/c
 				return _get(Object.getPrototypeOf(SoyComponent.prototype), 'valueElementFn_', this).call(this);
 			}
 		}], [{
+			key: 'createComponentFromTemplate',
+
+			/**
+    * Creates and instantiates a component that has the given soy template function as its
+    * main content template. All keys present in the config object, if one is given, will be
+    * attributes of this component, and the object itself will be passed to the constructor.
+    * @param {!function()} templateFn
+    * @param {Object=} opt_config
+    * @return {!SoyComponent}
+    * @static
+    */
+			value: function createComponentFromTemplate(templateFn, opt_config) {
+				var TemplateComponent = (function (_SoyComponent) {
+					function TemplateComponent() {
+						_classCallCheck(this, TemplateComponent);
+
+						if (_SoyComponent != null) {
+							_SoyComponent.apply(this, arguments);
+						}
+					}
+
+					_inherits(TemplateComponent, _SoyComponent);
+
+					return TemplateComponent;
+				})(SoyComponent);
+
+				TemplateComponent.TEMPLATES = {
+					content: templateFn
+				};
+				TemplateComponent.ATTRS = {};
+				_Attribute['default'].mergeAttrsStatic(SoyComponent);
+				Object.keys(opt_config || {}).forEach(function (name) {
+					if (!SoyComponent.ATTRS_MERGED[name]) {
+						TemplateComponent.ATTRS[name] = {};
+					}
+				});
+				return new TemplateComponent(opt_config);
+			}
+		}, {
+			key: 'decorateFromTemplate',
+
+			/**
+    * Decorates html rendered by the given soy template function, instantiating any referenced
+    * components in it.
+    * @param {!function()} templateFn
+    * @param {Element=} opt_element The element that should be decorated. If none is given,
+    *   one will be created and appended to the document body.
+    * @param {Object=} opt_data Data to be passed to the soy template when it's called.
+    * @return {!SoyComponent} The component that was created for this action. Contains
+    *   references to components that were rendered by the given template function.
+    * @static
+    */
+			value: function decorateFromTemplate(templateFn, opt_element, opt_data) {
+				var config = _object['default'].mixin({
+					element: opt_element
+				}, opt_data);
+				return SoyComponent.createComponentFromTemplate(templateFn, config).decorate();
+			}
+		}, {
+			key: 'renderFromTemplate',
+
+			/**
+    * Renders the given soy template function, instantiating any referenced components in it.
+    * @param {!function()} templateFn
+    * @param {Element=} opt_element The element where the template should be rendered. If
+    *    none is given, one will be created and appended to the document body.
+    * @param {Object=} opt_data Data to be passed to the soy template when it's called.
+    * @return {!SoyComponent} The component that was created for this action. Contains
+    *   references to components that were rendered by the given template function.
+    * @static
+    */
+			value: function renderFromTemplate(templateFn, opt_element, opt_data) {
+				var config = _object['default'].mixin({
+					element: opt_element
+				}, opt_data);
+				return SoyComponent.createComponentFromTemplate(templateFn, config).render();
+			}
+		}, {
 			key: 'sanitizeHtml',
 
 			/**

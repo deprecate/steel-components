@@ -126,7 +126,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			value: function addAttrsFromStaticHint_(config) {
 				var ctor = this.constructor;
 				var defineContext = false;
-				if (_core['default'].mergeSuperClassesProperty(ctor, 'ATTRS', this.mergeAttrs_)) {
+				if (Attribute.mergeAttrsStatic(ctor)) {
 					defineContext = ctor.prototype;
 				}
 				this.addAttrs(ctor.ATTRS_MERGED, config, defineContext);
@@ -388,18 +388,6 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				info.state = Attribute.States.INITIALIZED;
 			}
 		}, {
-			key: 'mergeAttrs_',
-
-			/**
-    * Merges an array of values for the ATTRS property into a single object.
-    * @param {!Array} values The values to be merged.
-    * @return {!Object} The merged value.
-    * @protected
-    */
-			value: function mergeAttrs_(values) {
-				return _object['default'].mixin.apply(null, [{}].concat(values.reverse()));
-			}
-		}, {
 			key: 'mergeInvalidAttrs_',
 
 			/**
@@ -570,6 +558,31 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				var info = this.attrsInfo_[name];
 
 				return info.state === Attribute.States.INITIALIZING_DEFAULT || this.callValidator_(name, value);
+			}
+		}], [{
+			key: 'mergeAttrs_',
+
+			/**
+    * Merges an array of values for the ATTRS property into a single object.
+    * @param {!Array} values The values to be merged.
+    * @return {!Object} The merged value.
+    * @static
+    * @protected
+    */
+			value: function mergeAttrs_(values) {
+				return _object['default'].mixin.apply(null, [{}].concat(values.reverse()));
+			}
+		}, {
+			key: 'mergeAttrsStatic',
+
+			/**
+    * Merges the ATTRS static variable for the given constructor function.
+    * @param  {!Function} ctor Constructor function.
+    * @return {boolean} Returns true if merge happens, false otherwise.
+    * @static
+    */
+			value: function mergeAttrsStatic(ctor) {
+				return _core['default'].mergeSuperClassesProperty(ctor, 'ATTRS', Attribute.mergeAttrs_);
 			}
 		}]);
 
