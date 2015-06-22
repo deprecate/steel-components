@@ -24,6 +24,7 @@
     "steel-switcher": "metal/steel-switcher#master",
     "steel-tooltip": "metal/steel-tooltip#master",
     "steel-tooltip-menu": "metal/steel-tooltip-menu#master",
+    "steel-topbar": "metal/steel-topbar#master",
     "steel-treeview": "metal/steel-treeview#master"
   }
 }
