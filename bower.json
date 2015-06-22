@@ -15,6 +15,7 @@
     "!build/**/*"
   ],
   "dependencies": {
+    "steel-avatar": "metal/steel-avatar#master",
     "steel-autocomplete": "metal/steel-autocomplete#master",
     "steel-cell": "metal/steel-cell#master",
     "steel-dropdown": "metal/steel-dropdown#master",

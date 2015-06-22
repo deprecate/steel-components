@@ -1,4 +1,138 @@
 
+/* Avatar
+	 ========================================================================== */
+.avatar-round, .avatar, .avatar-initials, .avatar-icon, .avatar-icon-12,
+.avatar-icon-16, .avatar-photo img {
+  border-radius: 50%; }
+
+.avatar-photo:hover,
+.avatar-icon:hover,
+.avatar-icon-12:hover,
+.avatar-icon-16:hover {
+  opacity: .8; }
+
+.avatar, .avatar-initials, .avatar-icon, .avatar-icon-12,
+.avatar-icon-16 {
+  display: block;
+  text-align: center;
+  text-decoration: none; }
+
+/* Avatar - Sizes
+	 ========================================================================== */
+.avatar-small, .avatar-photo.avatar-small img {
+  width: 36px;
+  height: 36px; }
+
+.avatar-medium, .avatar-photo.avatar-medium img {
+  width: 56px;
+  height: 56px; }
+
+.avatar-large, .avatar-photo.avatar-large img {
+  width: 92px;
+  height: 92px; }
+
+/* Avatar - Photo
+	 ========================================================================== */
+.avatar-photo {
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out; }
+
+/* Avatar - Initials
+	 ========================================================================== */
+.avatar-initials {
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase; }
+
+.avatar-initials.avatar-small, .avatar-photo.avatar-small img.avatar-initials {
+  font-size: 9px;
+  line-height: 36px; }
+
+.avatar-initials.avatar-medium, .avatar-photo.avatar-medium img.avatar-initials {
+  font-size: 14px;
+  line-height: 56px; }
+
+.avatar-initials.avatar-large, .avatar-photo.avatar-large img.avatar-initials {
+  font-size: 23px;
+  line-height: 92px; }
+
+/* Avatar - Icon
+	 ========================================================================== */
+.avatar-icon {
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out; }
+
+/* Avatar - Icon (SVG)
+	 ========================================================================== */
+.avatar-icon.avatar-small img, .avatar-photo.avatar-small img.avatar-icon img {
+  width: 18px;
+  height: 18px;
+  padding: 9px 0; }
+
+.avatar-icon.avatar-medium img, .avatar-photo.avatar-medium img.avatar-icon img {
+  width: 28px;
+  height: 28px;
+  padding: 14px 0; }
+
+.avatar-icon.avatar-large img, .avatar-photo.avatar-large img.avatar-icon img {
+  width: 46px;
+  height: 46px;
+  padding: 23px 0; }
+
+/* Avatar - Icon (Font)
+	 ========================================================================== */
+.avatar-icon-12,
+.avatar-icon-16 {
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out; }
+
+.avatar-icon-12.avatar-medium, .avatar-photo.avatar-medium img.avatar-icon-12 {
+  width: 36px;
+  height: 36px; }
+
+.avatar-icon-12.avatar-medium span,
+.avatar-photo.avatar-medium img.avatar-icon-12 span,
+.avatar-icon-12.avatar-medium span, .avatar-photo.avatar-medium img.avatar-icon-12 span {
+  font-size: 12px;
+  line-height: 36px; }
+
+.avatar-icon-12.avatar-large, .avatar-photo.avatar-large img.avatar-icon-12 {
+  width: 72px;
+  height: 72px; }
+
+.avatar-icon-12.avatar-large span,
+.avatar-photo.avatar-large img.avatar-icon-12 span,
+.avatar-icon-12.avatar-large span, .avatar-photo.avatar-large img.avatar-icon-12 span {
+  font-size: 24px;
+  line-height: 72px; }
+
+.avatar-icon-16.avatar-medium, .avatar-photo.avatar-medium img.avatar-icon-16 {
+  width: 56px;
+  height: 56px; }
+
+.avatar-icon-16.avatar-medium span,
+.avatar-photo.avatar-medium img.avatar-icon-16 span,
+.avatar-icon-16.avatar-medium span, .avatar-photo.avatar-medium img.avatar-icon-16 span {
+  font-size: 16px;
+  line-height: 56px; }
+
+.avatar-icon-16.avatar-large, .avatar-photo.avatar-large img.avatar-icon-16 {
+  width: 92px;
+  height: 92px; }
+
+.avatar-icon-16.avatar-large span,
+.avatar-photo.avatar-large img.avatar-icon-16 span,
+.avatar-icon-16.avatar-large span, .avatar-photo.avatar-large img.avatar-icon-16 span {
+  font-size: 32px;
+  line-height: 92px; }
+
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 html {
   font-family: sans-serif;
@@ -6107,36 +6241,57 @@ button.close {
 .cell:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); }
 
-/* List
+
+/* Sidebar
 	 ========================================================================== */
-.list .list-item {
-  -webkit-transition: background 0.3s ease-in-out;
-  -o-transition: background 0.3s ease-in-out;
-  transition: background 0.3s ease-in-out;
+.sidebar {
+  background: white;
   border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  width: 208px; }
+
+.sidebar-list {
+  list-style: none;
   margin: 0;
-  padding: 8px;
-  width: 100%; }
+  padding: 0; }
 
-.list .list-item:hover {
-  background-color: rgba(28, 109, 226, 0.05); }
+.sidebar-item {
+  display: block;
+  margin: 2px 0; }
 
-.list .list-main-content {
-  margin-left: 12px; }
+.sidebar-item:first-child {
+  margin-top: 0;
+  padding-top: 16px; }
 
-.list .list-text-primary {
-  color: rgba(35, 50, 64, 0.8);
-  font-size: 14px; }
+.sidebar-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 16px; }
 
-.list .list-text-secondary {
-  color: rgba(35, 50, 64, 0.4);
-  font-size: 12px; }
+.sidebar-link {
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  color: rgba(35, 50, 64, 0.9);
+  display: block;
+  font-size: 13px;
+  padding: 8px 20px;
+  text-decoration: none; }
 
-.list .list-icons {
-  margin-top: 8px; }
+.sidebar-link:hover {
+  background: rgba(28, 109, 226, 0.05);
+  color: rgba(35, 50, 64, 0.9); }
 
-.list .list-icon {
-  margin-left: 3px; }
+.sidebar-link-selected,
+.sidebar-link-selected:hover {
+  background: rgba(28, 109, 226, 0.1);
+  color: #1c6de2; }
+
+.sidebar-icon {
+  color: #1c6de2;
+  display: inline-block;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 16px; }
 
 /* Modal
 	 ========================================================================== */
@@ -6208,75 +6363,6 @@ button.close {
 .modal-footer .btn:last-child {
   margin-right: 0; }
 
-
-/* Sidebar
-	 ========================================================================== */
-.sidebar {
-  background: white;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  width: 208px; }
-
-.sidebar-list {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-
-.sidebar-item {
-  display: block;
-  margin: 2px 0; }
-
-.sidebar-item:first-child {
-  margin-top: 0;
-  padding-top: 16px; }
-
-.sidebar-item:last-child {
-  margin-bottom: 0;
-  padding-bottom: 16px; }
-
-.sidebar-link {
-  -webkit-transition: all 0.3s ease-in-out;
-  -o-transition: all 0.3s ease-in-out;
-  transition: all 0.3s ease-in-out;
-  color: rgba(35, 50, 64, 0.9);
-  display: block;
-  font-size: 13px;
-  padding: 8px 20px;
-  text-decoration: none; }
-
-.sidebar-link:hover {
-  background: rgba(28, 109, 226, 0.05);
-  color: rgba(35, 50, 64, 0.9); }
-
-.sidebar-link-selected,
-.sidebar-link-selected:hover {
-  background: rgba(28, 109, 226, 0.1);
-  color: #1c6de2; }
-
-.sidebar-icon {
-  color: #1c6de2;
-  display: inline-block;
-  margin-right: 16px;
-  vertical-align: middle;
-  width: 16px; }
-
-/* Tooltip
-	 ========================================================================== */
-.tooltip-inner {
-  background: #fff;
-  border-radius: 4px;
-  border: 1px solid rgba(35, 50, 64, 0.12);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  color: rgba(35, 50, 64, 0.7);
-  display: inline-block;
-  font-size: 12px;
-  max-width: none;
-  padding: 8px 12px;
-  position: absolute; }
-
-.tooltip-arrow {
-  display: none; }
-
 /* Switcher - Off
 	 ========================================================================== */
 .switcher {
@@ -6319,44 +6405,53 @@ button.close {
   margin: 9px auto;
   width: 2px; }
 
-/* Tooltip Menu
+/* List
 	 ========================================================================== */
-.tooltip-menu {
+.list .list-item {
+  -webkit-transition: background 0.3s ease-in-out;
+  -o-transition: background 0.3s ease-in-out;
+  transition: background 0.3s ease-in-out;
+  border-radius: 2px;
+  margin: 0;
+  padding: 8px;
+  width: 100%; }
+
+.list .list-item:hover {
+  background-color: rgba(28, 109, 226, 0.05); }
+
+.list .list-main-content {
+  margin-left: 12px; }
+
+.list .list-text-primary {
+  color: rgba(35, 50, 64, 0.8);
+  font-size: 14px; }
+
+.list .list-text-secondary {
+  color: rgba(35, 50, 64, 0.4);
+  font-size: 12px; }
+
+.list .list-icons {
+  margin-top: 8px; }
+
+.list .list-icon {
+  margin-left: 3px; }
+
+/* Tooltip
+	 ========================================================================== */
+.tooltip-inner {
   background: #fff;
   border-radius: 4px;
   border: 1px solid rgba(35, 50, 64, 0.12);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  display: inline-block;
-  position: absolute;
-  text-align: center; }
-
-.tooltip-menu-list {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-
-.tooltip-menu-item {
-  margin: 0; }
-
-.tooltip-menu-item:first-child {
-  margin-top: 6px; }
-
-.tooltip-menu-item:last-child {
-  margin-bottom: 6px; }
-
-.tooltip-menu-link {
-  -webkit-transition: background 0.3s ease-in-out;
-  -o-transition: background 0.3s ease-in-out;
-  transition: background 0.3s ease-in-out;
   color: rgba(35, 50, 64, 0.7);
-  display: block;
+  display: inline-block;
   font-size: 12px;
-  padding: 4px 24px;
-  text-decoration: none; }
+  max-width: none;
+  padding: 8px 12px;
+  position: absolute; }
 
-.tooltip-menu-link:hover {
-  background: rgba(28, 109, 226, 0.05);
-  color: rgba(35, 50, 64, 0.7); }
+.tooltip-arrow {
+  display: none; }
 
 /* Topbar
 	 ========================================================================== */
@@ -6481,3 +6576,42 @@ button.close {
 
 .treeview .treeview-node-wrapper.expanded > .treeview-nodes {
   display: block; }
+
+/* Tooltip Menu
+	 ========================================================================== */
+.tooltip-menu {
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid rgba(35, 50, 64, 0.12);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  display: inline-block;
+  position: absolute;
+  text-align: center; }
+
+.tooltip-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+
+.tooltip-menu-item {
+  margin: 0; }
+
+.tooltip-menu-item:first-child {
+  margin-top: 6px; }
+
+.tooltip-menu-item:last-child {
+  margin-bottom: 6px; }
+
+.tooltip-menu-link {
+  -webkit-transition: background 0.3s ease-in-out;
+  -o-transition: background 0.3s ease-in-out;
+  transition: background 0.3s ease-in-out;
+  color: rgba(35, 50, 64, 0.7);
+  display: block;
+  font-size: 12px;
+  padding: 4px 24px;
+  text-decoration: none; }
+
+.tooltip-menu-link:hover {
+  background: rgba(28, 109, 226, 0.05);
+  color: rgba(35, 50, 64, 0.7); }
