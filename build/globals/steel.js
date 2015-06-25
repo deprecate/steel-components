@@ -8887,6 +8887,235 @@ this.steelNamed = {};
   var ComponentRegistry = this.steel.ComponentRegistry;
 
   var Templates = ComponentRegistry.Templates;
+  // This file was automatically generated from TooltipMenu.soy.
+  // Please don't edit this file by hand.
+
+  /**
+   * @fileoverview Templates in namespace Templates.TooltipMenu.
+   * @hassoydeltemplate {TooltipMenu}
+   * @hassoydeltemplate {TooltipMenu.items}
+   * @hassoydelcall {TooltipMenu}
+   * @hassoydelcall {TooltipMenu.items}
+   */
+
+  if (typeof Templates.TooltipMenu == 'undefined') {
+    Templates.TooltipMenu = {};
+  }
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.content = function (opt_data, opt_ignored, opt_ijData) {
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', true)(opt_data, null, opt_ijData));
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.content.soyTemplateName = 'Templates.TooltipMenu.content';
+  }
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.items = function (opt_data, opt_ignored, opt_ijData) {
+    var output = '';
+    var itemList5 = opt_data.content;
+    var itemListLen5 = itemList5.length;
+    for (var itemIndex5 = 0; itemIndex5 < itemListLen5; itemIndex5++) {
+      var itemData5 = itemList5[itemIndex5];
+      output += '<li class="tooltip-menu-item"><a class="tooltip-menu-link" href="' + soy.$$escapeHtmlAttribute(soy.$$filterNormalizeUri(itemData5.href ? itemData5.href : '#')) + '">' + soy.$$escapeHtml(itemData5.content) + '</a></li>';
+    }
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.items.soyTemplateName = 'Templates.TooltipMenu.items';
+  }
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s12_cfc546d2 = function (opt_data, opt_ignored, opt_ijData) {
+    opt_data = opt_data || {};
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<nav id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip-menu ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? opt_data.elementClasses : '') + ' bottom" data-component>' + soy.$$escapeHtml(opt_data.elementContent) + '</nav>');
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s12_cfc546d2.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s12_cfc546d2';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', 0, Templates.TooltipMenu.__deltemplate_s12_cfc546d2);
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s20_c0ab3df3 = function (opt_data, opt_ignored, opt_ijData) {
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items" class="tooltip-menu-list">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s20_c0ab3df3.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s20_c0ab3df3';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', 0, Templates.TooltipMenu.__deltemplate_s20_c0ab3df3);
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s26_8f8c631d = function (opt_data, opt_ignored, opt_ijData) {
+    opt_data = opt_data || {};
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s26_8f8c631d.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s26_8f8c631d';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), '', 0, Templates.TooltipMenu.__deltemplate_s26_8f8c631d);
+
+  /**
+   * @param {Object.<string, *>=} opt_data
+   * @param {(null|undefined)=} opt_ignored
+   * @param {Object.<string, *>=} opt_ijData
+   * @return {!soydata.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  Templates.TooltipMenu.__deltemplate_s32_8278e063 = function (opt_data, opt_ignored, opt_ijData) {
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.items(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
+  };
+  if (goog.DEBUG) {
+    Templates.TooltipMenu.__deltemplate_s32_8278e063.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s32_8278e063';
+  }
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', 0, Templates.TooltipMenu.__deltemplate_s32_8278e063);
+
+  Templates.TooltipMenu.items.params = ['content'];
+  this.steel.TooltipMenu = {};
+
+  /* jshint ignore:end */
+  this.steel.TooltipMenu.soy = Templates.TooltipMenu;
+}).call(this);
+(function () {
+	'use strict';
+
+	var dom = this.steel.dom;
+	var Tooltip = this.steel.Tooltip;
+	var ComponentRegistry = this.steel.ComponentRegistry;
+
+	/**
+  * TooltipMenu component.
+  */
+
+	var TooltipMenu = (function (_Tooltip) {
+		/**
+   * @inheritDoc
+   */
+
+		function TooltipMenu(opt_config) {
+			babelHelpers.classCallCheck(this, TooltipMenu);
+
+			babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'constructor', this).call(this, opt_config);
+		}
+
+		babelHelpers.inherits(TooltipMenu, _Tooltip);
+		babelHelpers.createClass(TooltipMenu, [{
+			key: 'attached',
+			value: function attached() {
+				babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'attached', this).call(this);
+				this.eventHandler_.add(dom.on(document, 'click', this.handleDocClick_.bind(this)));
+			}
+		}, {
+			key: 'syncContent',
+
+			/**
+    * @inheritDoc
+    */
+			value: function syncContent() {}
+		}, {
+			key: 'handleDocClick_',
+
+			/**
+    * Handles document click in order to hide menu.
+    * @param {Event} event
+    */
+			value: function handleDocClick_(event) {
+				if (this.element.contains(event.target)) {
+					return;
+				}
+				this.visible = false;
+			}
+		}]);
+		return TooltipMenu;
+	})(Tooltip);
+
+	/**
+  * Default tooltip elementClasses.
+  * @default tooltip
+  * @type {String}
+  * @static
+  */
+	TooltipMenu.ELEMENT_CLASSES_MERGED = 'tooltip-menu component';
+
+	/**
+  * TooltipMenu attrbutes definition.
+  * @type {Object}
+  * @static
+  */
+	TooltipMenu.ATTRS = {
+		/**
+   * Delay showing and hiding the menu (ms).
+   * @type {!Array.<number>}
+   * @default [ 0, 0 ]
+   */
+		delay: {
+			validator: Array.isArray,
+			value: [0, 0]
+		},
+
+		/**
+   * Trigger events used to bind handlers to show and hide tooltip.
+   * @type {!Array.<string>}
+   * @default ['click', 'mouseout']
+   */
+		triggerEvents: {
+			validator: Array.isArray,
+			value: ['click', 'click']
+		},
+
+		/**
+   * Items to be placed inside tooltip menu. Each item must contain at least a
+   * label key.
+   * @type {!Array.<!object>}
+   */
+		content: {
+			validator: Array.isArray,
+			valueFn: function valueFn() {
+				return [];
+			}
+		}
+	};
+
+	ComponentRegistry.register('TooltipMenu', TooltipMenu);
+
+	this.steel.TooltipMenu = TooltipMenu;
+}).call(this);
+(function () {
+  /* jshint ignore:start */
+  'use strict';
+
+  var ComponentRegistry = this.steel.ComponentRegistry;
+
+  var Templates = ComponentRegistry.Templates;
   // This file was automatically generated from Treeview.soy.
   // Please don't edit this file by hand.
 
@@ -9203,234 +9432,5 @@ this.steelNamed = {};
 
   var Treeview = this.steel.Treeview;
   this.steel.Treeview = Treeview;
-}).call(this);
-(function () {
-  /* jshint ignore:start */
-  'use strict';
-
-  var ComponentRegistry = this.steel.ComponentRegistry;
-
-  var Templates = ComponentRegistry.Templates;
-  // This file was automatically generated from TooltipMenu.soy.
-  // Please don't edit this file by hand.
-
-  /**
-   * @fileoverview Templates in namespace Templates.TooltipMenu.
-   * @hassoydeltemplate {TooltipMenu}
-   * @hassoydeltemplate {TooltipMenu.items}
-   * @hassoydelcall {TooltipMenu}
-   * @hassoydelcall {TooltipMenu.items}
-   */
-
-  if (typeof Templates.TooltipMenu == 'undefined') {
-    Templates.TooltipMenu = {};
-  }
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', true)(opt_data, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.content.soyTemplateName = 'Templates.TooltipMenu.content';
-  }
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.items = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var itemList5 = opt_data.content;
-    var itemListLen5 = itemList5.length;
-    for (var itemIndex5 = 0; itemIndex5 < itemListLen5; itemIndex5++) {
-      var itemData5 = itemList5[itemIndex5];
-      output += '<li class="tooltip-menu-item"><a class="tooltip-menu-link" href="' + soy.$$escapeHtmlAttribute(soy.$$filterNormalizeUri(itemData5.href ? itemData5.href : '#')) + '">' + soy.$$escapeHtml(itemData5.content) + '</a></li>';
-    }
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.items.soyTemplateName = 'Templates.TooltipMenu.items';
-  }
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s12_cfc546d2 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<nav id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip-menu ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? opt_data.elementClasses : '') + ' bottom" data-component>' + soy.$$escapeHtml(opt_data.elementContent) + '</nav>');
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s12_cfc546d2.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s12_cfc546d2';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', 0, Templates.TooltipMenu.__deltemplate_s12_cfc546d2);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s20_c0ab3df3 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items" class="tooltip-menu-list">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s20_c0ab3df3.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s20_c0ab3df3';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', 0, Templates.TooltipMenu.__deltemplate_s20_c0ab3df3);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s26_8f8c631d = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s26_8f8c631d.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s26_8f8c631d';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), '', 0, Templates.TooltipMenu.__deltemplate_s26_8f8c631d);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s32_8278e063 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.items(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s32_8278e063.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s32_8278e063';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', 0, Templates.TooltipMenu.__deltemplate_s32_8278e063);
-
-  Templates.TooltipMenu.items.params = ['content'];
-  this.steel.TooltipMenu = {};
-
-  /* jshint ignore:end */
-  this.steel.TooltipMenu.soy = Templates.TooltipMenu;
-}).call(this);
-(function () {
-	'use strict';
-
-	var dom = this.steel.dom;
-	var Tooltip = this.steel.Tooltip;
-	var ComponentRegistry = this.steel.ComponentRegistry;
-
-	/**
-  * TooltipMenu component.
-  */
-
-	var TooltipMenu = (function (_Tooltip) {
-		/**
-   * @inheritDoc
-   */
-
-		function TooltipMenu(opt_config) {
-			babelHelpers.classCallCheck(this, TooltipMenu);
-
-			babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'constructor', this).call(this, opt_config);
-		}
-
-		babelHelpers.inherits(TooltipMenu, _Tooltip);
-		babelHelpers.createClass(TooltipMenu, [{
-			key: 'attached',
-			value: function attached() {
-				babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'attached', this).call(this);
-				this.eventHandler_.add(dom.on(document, 'click', this.handleDocClick_.bind(this)));
-			}
-		}, {
-			key: 'syncContent',
-
-			/**
-    * @inheritDoc
-    */
-			value: function syncContent() {}
-		}, {
-			key: 'handleDocClick_',
-
-			/**
-    * Handles document click in order to hide menu.
-    * @param {Event} event
-    */
-			value: function handleDocClick_(event) {
-				if (this.element.contains(event.target)) {
-					return;
-				}
-				this.visible = false;
-			}
-		}]);
-		return TooltipMenu;
-	})(Tooltip);
-
-	/**
-  * Default tooltip elementClasses.
-  * @default tooltip
-  * @type {String}
-  * @static
-  */
-	TooltipMenu.ELEMENT_CLASSES_MERGED = 'tooltip-menu component';
-
-	/**
-  * TooltipMenu attrbutes definition.
-  * @type {Object}
-  * @static
-  */
-	TooltipMenu.ATTRS = {
-		/**
-   * Delay showing and hiding the menu (ms).
-   * @type {!Array.<number>}
-   * @default [ 0, 0 ]
-   */
-		delay: {
-			validator: Array.isArray,
-			value: [0, 0]
-		},
-
-		/**
-   * Trigger events used to bind handlers to show and hide tooltip.
-   * @type {!Array.<string>}
-   * @default ['click', 'mouseout']
-   */
-		triggerEvents: {
-			validator: Array.isArray,
-			value: ['click', 'click']
-		},
-
-		/**
-   * Items to be placed inside tooltip menu. Each item must contain at least a
-   * label key.
-   * @type {!Array.<!object>}
-   */
-		content: {
-			validator: Array.isArray,
-			valueFn: function valueFn() {
-				return [];
-			}
-		}
-	};
-
-	ComponentRegistry.register('TooltipMenu', TooltipMenu);
-
-	this.steel.TooltipMenu = TooltipMenu;
 }).call(this);
 //# sourceMappingURL=steel.js.map
