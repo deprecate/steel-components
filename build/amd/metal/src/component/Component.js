@@ -633,6 +633,22 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				return this;
 			}
 		}, {
+			key: 'disposeSubComponents_',
+
+			/**
+    * Calls `dispose` on all subcomponents.
+    * @protected
+    */
+			value: function disposeSubComponents_() {
+				var ids = Object.keys(this.components);
+				for (var i = 0; i < ids.length; i++) {
+					var component = this.components[ids[i]];
+					Component.componentsCollector.removeComponent(component);
+					component.dispose();
+				}
+				this.components = null;
+			}
+		}, {
 			key: 'disposeInternal',
 
 			/**
@@ -649,7 +665,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				this.delegateEventHandler_.removeAllListeners();
 				this.delegateEventHandler_ = null;
 
-				this.components = null;
+				this.disposeSubComponents_();
 				this.generatedIdCount_ = null;
 				this.surfaces_ = null;
 				this.surfacesRenderAttrs_ = null;

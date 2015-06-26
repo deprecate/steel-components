@@ -35,7 +35,7 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
 
 			/**
     * Adds a component to this collector.
-    * @param {Component} component
+    * @param {!Component} component
     */
 			value: function addComponent(component) {
 				ComponentCollector.components[component.id] = component;
@@ -73,6 +73,16 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
 				var data = this.nextComponentData_[id] || {};
 				data.id = id;
 				return data;
+			}
+		}, {
+			key: 'removeComponent',
+
+			/**
+    * Removes the given component from this collector.
+    * @param {!Component} component
+    */
+			value: function removeComponent(component) {
+				delete ComponentCollector.components[component.id];
 			}
 		}, {
 			key: 'setNextComponentData',

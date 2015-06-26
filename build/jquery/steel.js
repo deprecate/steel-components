@@ -394,6 +394,8 @@ this.steelNamed = {};
 (function () {
 	'use strict';
 
+	var core = this.steel.core;
+
 	var object = (function () {
 		function object() {
 			babelHelpers.classCallCheck(this, object);
@@ -417,6 +419,29 @@ this.steelNamed = {};
 					}
 				}
 				return target;
+			}
+		}, {
+			key: 'getObjectByName',
+
+			/**
+    * Returns an object based on its fully qualified external name.
+    * @param {string} name The fully qualified name.
+    * @param {object=} opt_obj The object within which to look; default is
+    *     <code>window</code>.
+    * @return {?} The value (object or primitive) or, if not found, null.
+    */
+			value: function getObjectByName(name, opt_obj) {
+				var parts = name.split('.');
+				var cur = opt_obj || window;
+				var part;
+				while (part = parts.shift()) {
+					if (core.isDefAndNotNull(cur[part])) {
+						cur = cur[part];
+					} else {
+						return null;
+					}
+				}
+				return cur;
 			}
 		}]);
 		return object;
@@ -910,6 +935,26 @@ this.steelNamed = {};
 				return new DomEventHandle(element, eventName, callback);
 			}
 		}, {
+			key: 'once',
+
+			/**
+    * Listens to the specified event on the given DOM element once. This
+    * function normalizes DOM event payloads and functions so they'll work the
+    * same way on all supported browsers.
+    * @param {!Element} element The DOM element to listen to the event on.
+    * @param {string} eventName The name of the event to listen to.
+    * @param {!function(!Object)} callback Function to be called when the event
+    *   is triggered. It will receive the normalized event object.
+    * @return {!DomEventHandle} Can be used to remove the listener.
+    */
+			value: function once(element, eventName, callback) {
+				var domEventHandle = this.on(element, eventName, function () {
+					domEventHandle.removeListener();
+					return callback.apply(this, arguments);
+				});
+				return domEventHandle;
+			}
+		}, {
 			key: 'registerCustomEvent',
 
 			/**
@@ -1154,27 +1199,6 @@ this.steelNamed = {};
 
 	var elementsByTag = {};
 	dom.customEvents = {};
-
-	var eventMap = {
-		mouseenter: 'mouseover',
-		mouseleave: 'mouseout',
-		pointerenter: 'pointerover',
-		pointerleave: 'pointerout'
-	};
-	Object.keys(eventMap).forEach(function (eventName) {
-		dom.registerCustomEvent(eventName, {
-			delegate: true,
-			handler: function handler(callback, event) {
-				var related = event.relatedTarget;
-				var target = event.delegateTarget || event.target;
-				if (!related || related !== target && !target.contains(related)) {
-					event.customType = eventName;
-					return callback(event);
-				}
-			},
-			originalEvent: eventMap[eventName]
-		});
-	});
 
 	this.steel.dom = dom;
 }).call(this);
@@ -3685,46 +3709,6 @@ this.steelNamed = {};
 (function () {
 	'use strict';
 
-	var dom = this.steel.dom;
-
-	/**
-  * Class with static methods responsible for doing browser feature checks.
-  */
-
-	var features = (function () {
-		function features() {
-			babelHelpers.classCallCheck(this, features);
-		}
-
-		babelHelpers.createClass(features, null, [{
-			key: 'checkAttrOrderChange',
-
-			/**
-    * Some browsers (like IE9) change the order of element attributes, when html
-    * is rendered. This method can be used to check if this behavior happens on
-    * the current browser.
-    * @return {boolean}
-    */
-			value: function checkAttrOrderChange() {
-				if (features.attrOrderChange_ === undefined) {
-					var originalContent = '<div data-component="" data-ref=""></div>';
-					var element = document.createElement('div');
-					dom.append(element, originalContent);
-					features.attrOrderChange_ = originalContent !== element.innerHTML;
-				}
-				return features.attrOrderChange_;
-			}
-		}]);
-		return features;
-	})();
-
-	features.attrOrderChange_ = undefined;
-
-	this.steel.features = features;
-}).call(this);
-(function () {
-	'use strict';
-
 	var string = (function () {
 		function string() {
 			babelHelpers.classCallCheck(this, string);
@@ -3783,6 +3767,86 @@ this.steelNamed = {};
 	})();
 
 	this.steel.string = string;
+}).call(this);
+(function () {
+	'use strict';
+
+	var dom = this.steel.dom;
+	var string = this.steel.string;
+
+	/**
+  * Class with static methods responsible for doing browser feature checks.
+  */
+
+	var features = (function () {
+		function features() {
+			babelHelpers.classCallCheck(this, features);
+		}
+
+		babelHelpers.createClass(features, null, [{
+			key: 'checkAnimationEventName',
+
+			/**
+    * Some browsers still supports prefixed animation events. This method can
+    * be used to retrieve the current browser event name for both, animation
+    * and transition.
+    * @return {object}
+    */
+			value: function checkAnimationEventName() {
+				if (features.animationEventName_ === undefined) {
+					features.animationEventName_ = {
+						animation: features.checkAnimationEventName_('animation'),
+						transition: features.checkAnimationEventName_('transition')
+					};
+				}
+				return features.animationEventName_;
+			}
+		}, {
+			key: 'checkAnimationEventName_',
+
+			/**
+    * @protected
+    * @param {string} type Type to test: animation, transition.
+    * @return {string} Browser event name.
+    */
+			value: function checkAnimationEventName_(type) {
+				var prefixes = ['Webkit', 'MS', 'O', ''];
+				var typeTitleCase = string.replaceInterval(type, 0, 1, type.substring(0, 1).toUpperCase());
+				var suffixes = [typeTitleCase + 'End', typeTitleCase + 'End', typeTitleCase + 'End', type + 'end'];
+				for (var i = 0; i < prefixes.length; i++) {
+					if (features.animationElement_.style[prefixes[i] + typeTitleCase] !== undefined) {
+						return prefixes[i].toLowerCase() + suffixes[i];
+					}
+				}
+				return type + 'end';
+			}
+		}, {
+			key: 'checkAttrOrderChange',
+
+			/**
+    * Some browsers (like IE9) change the order of element attributes, when html
+    * is rendered. This method can be used to check if this behavior happens on
+    * the current browser.
+    * @return {boolean}
+    */
+			value: function checkAttrOrderChange() {
+				if (features.attrOrderChange_ === undefined) {
+					var originalContent = '<div data-component="" data-ref=""></div>';
+					var element = document.createElement('div');
+					dom.append(element, originalContent);
+					features.attrOrderChange_ = originalContent !== element.innerHTML;
+				}
+				return features.attrOrderChange_;
+			}
+		}]);
+		return features;
+	})();
+
+	features.animationElement_ = document.createElement('div');
+	features.animationEventName_ = undefined;
+	features.attrOrderChange_ = undefined;
+
+	this.steel.features = features;
 }).call(this);
 (function () {
 	'use strict';
@@ -4146,7 +4210,7 @@ this.steelNamed = {};
 
 			/**
     * Adds a component to this collector.
-    * @param {Component} component
+    * @param {!Component} component
     */
 			value: function addComponent(component) {
 				ComponentCollector.components[component.id] = component;
@@ -4184,6 +4248,16 @@ this.steelNamed = {};
 				var data = this.nextComponentData_[id] || {};
 				data.id = id;
 				return data;
+			}
+		}, {
+			key: 'removeComponent',
+
+			/**
+    * Removes the given component from this collector.
+    * @param {!Component} component
+    */
+			value: function removeComponent(component) {
+				delete ComponentCollector.components[component.id];
 			}
 		}, {
 			key: 'setNextComponentData',
@@ -4228,6 +4302,7 @@ this.steelNamed = {};
 (function () {
 	'use strict';
 
+	var core = this.steel.core;
 	var dom = this.steel.dom;
 	var Disposable = this.steel.Disposable;
 
@@ -4328,8 +4403,11 @@ this.steelNamed = {};
 					self.targetEmitter_.emit.apply(self.targetEmitter_, args);
 				};
 
-				var addFnName = this.originEmitter_.addEventListener ? 'addEventListener' : 'on';
-				this.originEmitter_[addFnName](event, this.proxiedEvents_[event]);
+				if (core.isElement(this.originEmitter_)) {
+					dom.on(this.originEmitter_, event, this.proxiedEvents_[event]);
+				} else {
+					this.originEmitter_.on(event, this.proxiedEvents_[event]);
+				}
 			}
 		}, {
 			key: 'shouldProxyEvent_',
@@ -5187,6 +5265,22 @@ this.steelNamed = {};
 				return this;
 			}
 		}, {
+			key: 'disposeSubComponents_',
+
+			/**
+    * Calls `dispose` on all subcomponents.
+    * @protected
+    */
+			value: function disposeSubComponents_() {
+				var ids = Object.keys(this.components);
+				for (var i = 0; i < ids.length; i++) {
+					var component = this.components[ids[i]];
+					Component.componentsCollector.removeComponent(component);
+					component.dispose();
+				}
+				this.components = null;
+			}
+		}, {
 			key: 'disposeInternal',
 
 			/**
@@ -5203,7 +5297,7 @@ this.steelNamed = {};
 				this.delegateEventHandler_.removeAllListeners();
 				this.delegateEventHandler_ = null;
 
-				this.components = null;
+				this.disposeSubComponents_();
 				this.generatedIdCount_ = null;
 				this.surfaces_ = null;
 				this.surfacesRenderAttrs_ = null;

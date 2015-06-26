@@ -318,6 +318,26 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/object/object', 'metal
 				return new _DomEventHandle['default'](element, eventName, callback);
 			}
 		}, {
+			key: 'once',
+
+			/**
+    * Listens to the specified event on the given DOM element once. This
+    * function normalizes DOM event payloads and functions so they'll work the
+    * same way on all supported browsers.
+    * @param {!Element} element The DOM element to listen to the event on.
+    * @param {string} eventName The name of the event to listen to.
+    * @param {!function(!Object)} callback Function to be called when the event
+    *   is triggered. It will receive the normalized event object.
+    * @return {!DomEventHandle} Can be used to remove the listener.
+    */
+			value: function once(element, eventName, callback) {
+				var domEventHandle = this.on(element, eventName, function () {
+					domEventHandle.removeListener();
+					return callback.apply(this, arguments);
+				});
+				return domEventHandle;
+			}
+		}, {
 			key: 'registerCustomEvent',
 
 			/**
@@ -563,27 +583,6 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/object/object', 'metal
 
 	var elementsByTag = {};
 	dom.customEvents = {};
-
-	var eventMap = {
-		mouseenter: 'mouseover',
-		mouseleave: 'mouseout',
-		pointerenter: 'pointerover',
-		pointerleave: 'pointerout'
-	};
-	Object.keys(eventMap).forEach(function (eventName) {
-		dom.registerCustomEvent(eventName, {
-			delegate: true,
-			handler: function handler(callback, event) {
-				var related = event.relatedTarget;
-				var target = event.delegateTarget || event.target;
-				if (!related || related !== target && !target.contains(related)) {
-					event.customType = eventName;
-					return callback(event);
-				}
-			},
-			originalEvent: eventMap[eventName]
-		});
-	});
 
 	module.exports = dom;
 });

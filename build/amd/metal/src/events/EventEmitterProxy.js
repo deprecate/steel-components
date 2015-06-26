@@ -1,4 +1,4 @@
-define(['exports', 'module', 'metal/src/dom/dom', 'metal/src/disposable/Disposable'], function (exports, module, _metalSrcDomDom, _metalSrcDisposableDisposable) {
+define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/disposable/Disposable'], function (exports, module, _metalSrcCore, _metalSrcDomDom, _metalSrcDisposableDisposable) {
 	'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -10,6 +10,8 @@ define(['exports', 'module', 'metal/src/dom/dom', 'metal/src/disposable/Disposab
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var _core = _interopRequireDefault(_metalSrcCore);
 
 	var _dom = _interopRequireDefault(_metalSrcDomDom);
 
@@ -113,8 +115,11 @@ define(['exports', 'module', 'metal/src/dom/dom', 'metal/src/disposable/Disposab
 					self.targetEmitter_.emit.apply(self.targetEmitter_, args);
 				};
 
-				var addFnName = this.originEmitter_.addEventListener ? 'addEventListener' : 'on';
-				this.originEmitter_[addFnName](event, this.proxiedEvents_[event]);
+				if (_core['default'].isElement(this.originEmitter_)) {
+					_dom['default'].on(this.originEmitter_, event, this.proxiedEvents_[event]);
+				} else {
+					this.originEmitter_.on(event, this.proxiedEvents_[event]);
+				}
 			}
 		}, {
 			key: 'shouldProxyEvent_',
