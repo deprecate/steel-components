@@ -249,7 +249,7 @@ define(['exports', 'module'], function (exports, module) {
   * @type {String}
   * @protected
   */
-	core.UID_PROPERTY = 'core_' + (Math.random() * 1000000000 >>> 0);
+	core.UID_PROPERTY = 'core_' + (Math.random() * 1e9 >>> 0);
 
 	/**
   * Counter for unique id.

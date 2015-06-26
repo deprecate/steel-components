@@ -39,7 +39,7 @@ define(['exports', 'module'], function (exports, module) {
 				var hash = 0;
 				for (var i = 0, len = val.length; i < len; i++) {
 					hash = 31 * hash + val.charCodeAt(i);
-					hash %= 4294967296;
+					hash %= 0x100000000;
 				}
 				return hash;
 			}

@@ -1,3 +1,64 @@
+.primary {
+  color: #1c6de2; }
+
+.secondary {
+  color: #233240; }
+
+/* List
+	 ========================================================================== */
+.list .list-item {
+  -webkit-transition: background 0.3s ease-in-out;
+  -o-transition: background 0.3s ease-in-out;
+  transition: background 0.3s ease-in-out;
+  border-radius: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  width: 100%; }
+
+.list .list-item:hover {
+  background-color: rgba(28, 109, 226, 0.05); }
+
+.list .list-main-content {
+  margin-left: 12px; }
+
+.list .list-text-primary {
+  color: rgba(35, 50, 64, 0.8);
+  font-size: 14px; }
+
+.list .list-text-secondary {
+  color: rgba(35, 50, 64, 0.4);
+  font-size: 12px; }
+
+.list .list-icons {
+  margin-top: 8px; }
+
+.list .list-icon {
+  margin-left: 3px; }
+
+.list > ul {
+  padding: 0; }
+
+.autocomplete {
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  background-color: #fff;
+  margin-top: 4px;
+  border: 1px transparent;
+  border-radius: 2px;
+  overflow: hidden;
+  position: absolute;
+  z-index: 1050; }
+  .autocomplete .list {
+    padding-bottom: 12px;
+    padding-top: 12px; }
+    .autocomplete .list .list-item:hover {
+      background-color: #edf4fd; }
+    .autocomplete .list ul {
+      margin: 0;
+      padding: 0; }
+    .autocomplete .list li {
+      list-style: none; }
 
 .primary {
   color: #1c6de2; }
@@ -6285,38 +6346,6 @@ button.close {
 .secondary {
   color: #233240; }
 
-/* Dropdown
-	 ========================================================================== */
-.dropdown-menu {
-  background: #fff;
-  border-radius: 4px;
-  border: 1px solid rgba(35, 50, 64, 0.12);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  text-align: center; }
-
-.dropdown-menu > li:first-child {
-  margin-top: 6px; }
-
-.dropdown-menu > li:last-child {
-  margin-bottom: 6px; }
-
-.dropdown-menu > li > a {
-  -webkit-transition: background 0.3s ease-in-out;
-  -o-transition: background 0.3s ease-in-out;
-  transition: background 0.3s ease-in-out;
-  color: rgba(35, 50, 64, 0.7);
-  padding: 4px 24px; }
-
-.dropdown-menu > li > a:hover {
-  background: rgba(28, 109, 226, 0.05);
-  color: rgba(35, 50, 64, 0.7); }
-
-.primary {
-  color: #1c6de2; }
-
-.secondary {
-  color: #233240; }
-
 /* List
 	 ========================================================================== */
 .list .list-item {
@@ -6324,6 +6353,7 @@ button.close {
   -o-transition: background 0.3s ease-in-out;
   transition: background 0.3s ease-in-out;
   border-radius: 2px;
+  list-style: none;
   margin: 0;
   padding: 8px;
   width: 100%; }
@@ -6347,6 +6377,9 @@ button.close {
 
 .list .list-icon {
   margin-left: 3px; }
+
+.list > ul {
+  padding: 0; }
 
 .primary {
   color: #1c6de2; }
@@ -6430,63 +6463,6 @@ button.close {
 .secondary {
   color: #233240; }
 
-/* Sidebar
-	 ========================================================================== */
-.sidebar {
-  background: white;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  width: 208px; }
-
-.sidebar-list {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-
-.sidebar-item {
-  display: block;
-  margin: 2px 0; }
-
-.sidebar-item:first-child {
-  margin-top: 0;
-  padding-top: 16px; }
-
-.sidebar-item:last-child {
-  margin-bottom: 0;
-  padding-bottom: 16px; }
-
-.sidebar-link {
-  -webkit-transition: all 0.3s ease-in-out;
-  -o-transition: all 0.3s ease-in-out;
-  transition: all 0.3s ease-in-out;
-  color: rgba(35, 50, 64, 0.9);
-  display: block;
-  font-size: 13px;
-  padding: 8px 20px;
-  text-decoration: none; }
-
-.sidebar-link:hover {
-  background: rgba(28, 109, 226, 0.05);
-  color: rgba(35, 50, 64, 0.9); }
-
-.sidebar-link-selected,
-.sidebar-link-selected:hover {
-  background: rgba(28, 109, 226, 0.1);
-  color: #1c6de2; }
-
-.sidebar-icon {
-  color: #1c6de2;
-  display: inline-block;
-  margin-right: 16px;
-  vertical-align: middle;
-  width: 16px; }
-
-.primary {
-  color: #1c6de2; }
-
-.secondary {
-  color: #233240; }
-
 /* Switcher - Off
 	 ========================================================================== */
 .switcher {
@@ -6552,6 +6528,48 @@ button.close {
 .tooltip-arrow {
   display: none; }
 
+/* TreeView
+	 ========================================================================== */
+.treeview ul {
+  list-style: none; }
+
+.treeview .treeview-nodes {
+  margin: 0.5rem 0 0 2.1rem;
+  padding: 0; }
+
+.treeview .treeview-node {
+  margin-bottom: 0.5rem; }
+
+.treeview .treeview-node-main.hasChildren {
+  cursor: pointer; }
+
+.treeview .treeview-node-toggler {
+  border: 1px solid #000;
+  float: left;
+  font-size: 1.2rem;
+  height: 1rem;
+  margin-top: .4rem;
+  line-height: 0.7rem;
+  text-align: center;
+  width: 1rem; }
+
+.treeview .treeview-node-toggler:before {
+  content: '+'; }
+
+.treeview .treeview-node-wrapper.expanded > .treeview-node-main > .treeview-node-toggler:before {
+  content: '-'; }
+
+.treeview .treeview-node-name {
+  float: left;
+  font-size: 1.4rem;
+  margin-left: .8rem; }
+
+.treeview .treeview-node-wrapper > .treeview-nodes {
+  display: none; }
+
+.treeview .treeview-node-wrapper.expanded > .treeview-nodes {
+  display: block; }
+
 .primary {
   color: #1c6de2; }
 
@@ -6596,133 +6614,3 @@ button.close {
 .tooltip-menu-link:hover {
   background: rgba(28, 109, 226, 0.05);
   color: rgba(35, 50, 64, 0.7); }
-
-.primary {
-  color: #1c6de2; }
-
-.secondary {
-  color: #233240; }
-
-/* Topbar
-	 ========================================================================== */
-.topbar {
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
-  background: white;
-  height: 72px; }
-
-.topbar-list {
-  list-style: none;
-  font-size: 0;
-  margin: 0;
-  padding: 0; }
-
-.topbar-item {
-  display: inline-block;
-  margin: 0 20px; }
-
-.topbar-item:first-child {
-  margin: 0 20px 0 0; }
-
-.topbar-item:last-child {
-  margin-right: 32px;
-  padding: 0; }
-
-.topbar-logo-link {
-  background: #1c6de2;
-  display: block;
-  font-size: 12px;
-  padding: 26px; }
-
-.topbar-logo {
-  vertical-align: sub; }
-
-.topbar-logo-dropdown {
-  background: #1c6de2;
-  border-radius: initial;
-  border: 0;
-  color: white;
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  height: 72px;
-  padding: 29px;
-  text-decoration: none; }
-
-.topbar-logo-dropdown:hover {
-  color: white; }
-
-.topbar-link {
-  -webkit-transition: color 0.3s ease-in-out;
-  -o-transition: color 0.3s ease-in-out;
-  transition: color 0.3s ease-in-out;
-  color: rgba(35, 50, 64, 0.7);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 0 4px;
-  text-decoration: none; }
-
-.topbar-link-selected,
-.topbar-link-selected:hover {
-  color: #1c6de2;
-  border-bottom: 2px solid #1c6de2;
-  padding-bottom: 24px; }
-
-.topbar-item .avatar {
-  display: block;
-  height: 36px;
-  width: 36px; }
-
-/* Topbar Fill
-	 ========================================================================== */
-.topbar-fill.topbar {
-  background: #1c6de2; }
-
-.topbar-fill .topbar-link:hover {
-  color: white; }
-
-.topbar-fill .topbar-link-selected,
-.topbar-fill .topbar-link-selected:hover {
-  color: white;
-  border-color: white; }
-
-/* TreeView
-	 ========================================================================== */
-.treeview ul {
-  list-style: none; }
-
-.treeview .treeview-nodes {
-  margin: 0.5rem 0 0 2.1rem;
-  padding: 0; }
-
-.treeview .treeview-node {
-  margin-bottom: 0.5rem; }
-
-.treeview .treeview-node-main.hasChildren {
-  cursor: pointer; }
-
-.treeview .treeview-node-toggler {
-  border: 1px solid #000;
-  float: left;
-  font-size: 1.2rem;
-  height: 1rem;
-  margin-top: .4rem;
-  line-height: 0.7rem;
-  text-align: center;
-  width: 1rem; }
-
-.treeview .treeview-node-toggler:before {
-  content: '+'; }
-
-.treeview .treeview-node-wrapper.expanded > .treeview-node-main > .treeview-node-toggler:before {
-  content: '-'; }
-
-.treeview .treeview-node-name {
-  float: left;
-  font-size: 1.4rem;
-  margin-left: .8rem; }
-
-.treeview .treeview-node-wrapper > .treeview-nodes {
-  display: none; }
-
-.treeview .treeview-node-wrapper.expanded > .treeview-nodes {
-  display: block; }

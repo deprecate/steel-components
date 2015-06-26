@@ -69,7 +69,7 @@
  * @param? surfaceId
  */
 {deltemplate Dropdown.header variant="'element'"}
-	{let $elementId: $id + '-' + (isNonnull($surfaceId) ? $surfaceId : 'header') /}
+	{let $elementId: ($id ? $id : '') + '-' + (isNonnull($surfaceId) ? $surfaceId : 'header') /}
 	<div id="{$elementId}">{$elementContent}</div>
 {/deltemplate}
 
@@ -84,6 +84,7 @@
 			{call .header data="all" /}
 		{/param}
 		{param id: $id /}
+		{param surfaceId: $surfaceId /}
 	{/delcall}
 {/deltemplate}
 
@@ -98,5 +99,6 @@
 			{call .body data="all" /}
 		{/param}
 		{param id: $id /}
+		{param surfaceId: $surfaceId /}
 	{/delcall}
 {/deltemplate}
