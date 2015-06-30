@@ -42,6 +42,11 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/s
 				this.syncVisible(false);
 			}
 		}, {
+			key: 'toggle',
+			value: function toggle() {
+				this.visible = !this.visible;
+			}
+		}, {
 			key: 'syncDismissible',
 			value: function syncDismissible(dismissible) {
 				_dom['default'][dismissible ? 'addClasses' : 'removeClasses'](this.element, 'alert-dismissible');

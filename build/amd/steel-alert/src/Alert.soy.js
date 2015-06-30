@@ -60,7 +60,7 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry'], function 
    * @suppress {checkTypes}
    */
   Templates.Alert.dismiss = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.dismissible ? '<button type="button" class="close" aria-label="Close" data-onclick="close"><span aria-hidden="true">×</span></button>' : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.dismissible ? '<button type="button" class="close" aria-label="Close" data-onclick="toggle"><span aria-hidden="true">×</span></button>' : '');
   };
   if (goog.DEBUG) {
     Templates.Alert.dismiss.soyTemplateName = 'Templates.Alert.dismiss';

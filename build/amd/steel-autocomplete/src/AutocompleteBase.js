@@ -173,15 +173,6 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
 				this.inputElement.focus();
 			},
 			validator: _core['default'].isFunction
-		},
-
-		/**
-   * Indicates if the component is visible or not.
-   * @type {boolean}
-   */
-		visible: {
-			validator: _core['default'].isBoolean,
-			value: false
 		}
 	};
 
