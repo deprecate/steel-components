@@ -28,6 +28,8 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
   */
 
 	var AutocompleteBase = (function (_SoyComponent) {
+		_inherits(AutocompleteBase, _SoyComponent);
+
 		/**
    * @inheritDoc
    */
@@ -40,8 +42,6 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
 			this.eventHandler_ = new _EventHandler['default']();
 			this.on('select', this.select);
 		}
-
-		_inherits(AutocompleteBase, _SoyComponent);
 
 		_createClass(AutocompleteBase, [{
 			key: 'attached',
@@ -173,6 +173,15 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
 				this.inputElement.focus();
 			},
 			validator: _core['default'].isFunction
+		},
+
+		/**
+   * Indicates if the component is visible or not.
+   * @type {boolean}
+   */
+		visible: {
+			validator: _core['default'].isBoolean,
+			value: false
 		}
 	};
 

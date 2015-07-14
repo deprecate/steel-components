@@ -1,4 +1,4 @@
-define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCollector', 'metal/src/disposable/Disposable'], function (exports, module, _metalSrcCore, _metalSrcComponentComponentCollector, _metalSrcDisposableDisposable) {
+define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCollector', 'metal/src/disposable/Disposable', 'metal/src/events/EventHandler'], function (exports, module, _metalSrcCore, _metalSrcComponentComponentCollector, _metalSrcDisposableDisposable, _metalSrcEventsEventHandler) {
 	'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -17,6 +17,8 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
 
 	var _Disposable2 = _interopRequireDefault(_metalSrcDisposableDisposable);
 
+	var _EventHandler = _interopRequireDefault(_metalSrcEventsEventHandler);
+
 	/**
   * Collects inline events from a passed element, detaching previously
   * attached events that are not being used anymore.
@@ -26,6 +28,8 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
   */
 
 	var EventsCollector = (function (_Disposable) {
+		_inherits(EventsCollector, _Disposable);
+
 		function EventsCollector(component) {
 			_classCallCheck(this, EventsCollector);
 
@@ -44,7 +48,7 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
 
 			/**
     * Holds the attached delegate event handles, indexed by the css selector.
-    * @type {!Object<string, !DomEventHandle>}
+    * @type {!Object<string, EventHandler>}
     * @protected
     */
 			this.eventHandles_ = {};
@@ -57,8 +61,6 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
 			this.groupHasListener_ = {};
 		}
 
-		_inherits(EventsCollector, _Disposable);
-
 		_createClass(EventsCollector, [{
 			key: 'attachListener_',
 
@@ -66,19 +68,23 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
     * Attaches the listener described by the given params, unless it has already
     * been attached.
     * @param {string} eventType
-    * @param {string} fnName
+    * @param {string} fnNamesString
     * @param {boolean} permanent
     * @protected
     */
-			value: function attachListener_(eventType, fnName, groupName) {
-				var selector = '[data-on' + eventType + '="' + fnName + '"]';
+			value: function attachListener_(eventType, fnNamesString, groupName) {
+				var selector = '[data-on' + eventType + '="' + fnNamesString + '"]';
 
 				this.groupHasListener_[groupName][selector] = true;
 
 				if (!this.eventHandles_[selector]) {
-					var fn = this.getListenerFn(fnName);
-					if (fn) {
-						this.eventHandles_[selector] = this.component_.delegate(eventType, selector, this.onEvent_.bind(this, fn));
+					this.eventHandles_[selector] = new _EventHandler['default']();
+					var fnNames = fnNamesString.split(',');
+					for (var i = 0; i < fnNames.length; i++) {
+						var fn = this.getListenerFn(fnNames[i]);
+						if (fn) {
+							this.eventHandles_[selector].add(this.component_.delegate(eventType, selector, this.onEvent_.bind(this, fn)));
+						}
 					}
 				}
 			}
@@ -127,7 +133,7 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
 			value: function detachAllListeners() {
 				for (var selector in this.eventHandles_) {
 					if (this.eventHandles_[selector]) {
-						this.eventHandles_[selector].removeListener();
+						this.eventHandles_[selector].removeAllListeners();
 					}
 				}
 				this.eventHandles_ = {};
@@ -151,7 +157,7 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
 							}
 						}
 						if (unused) {
-							this.eventHandles_[selector].removeListener();
+							this.eventHandles_[selector].removeAllListeners();
 							this.eventHandles_[selector] = null;
 						}
 					}
@@ -193,6 +199,18 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/component/ComponentCol
 				} else {
 					console.error('No function named "' + fnName + '" was found in the component with id "' + fnComponent.id + '". Make sure that you specify valid function names when adding ' + 'inline listeners.');
 				}
+			}
+		}, {
+			key: 'hasAttachedForGroup',
+
+			/**
+    * Checks if this EventsCollector instance has already attached listeners for the given
+    * group before.
+    * @param  {string} group
+    * @return {boolean}
+    */
+			value: function hasAttachedForGroup(group) {
+				return !!this.groupHasListener_.hasOwnProperty(group);
 			}
 		}, {
 			key: 'onEvent_',

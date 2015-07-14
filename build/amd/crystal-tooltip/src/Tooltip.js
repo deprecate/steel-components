@@ -1,4 +1,4 @@
-define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal-position/src/Align', 'metal/src/component/ComponentRegistry', 'metal/src/events/EventHandler', 'metal/src/soy/SoyComponent', 'crystal-tooltip/src/Tooltip.soy'], function (exports, module, _metalSrcCore, _metalSrcDomDom, _metalPositionSrcAlign, _metalSrcComponentComponentRegistry, _metalSrcEventsEventHandler, _metalSrcSoySoyComponent, _crystalTooltipSrcTooltipSoy) {
+define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal-position/src/Align', 'metal/src/component/ComponentRegistry', 'metal/src/events/EventHandler', 'metal/src/soy/SoyComponent', 'metal/src/dom/events', 'crystal-tooltip/src/Tooltip.soy'], function (exports, module, _metalSrcCore, _metalSrcDomDom, _metalPositionSrcAlign, _metalSrcComponentComponentRegistry, _metalSrcEventsEventHandler, _metalSrcSoySoyComponent, _metalSrcDomEvents, _crystalTooltipSrcTooltipSoy) {
 	'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -28,6 +28,8 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal-posit
   */
 
 	var Tooltip = (function (_SoyComponent) {
+		_inherits(Tooltip, _SoyComponent);
+
 		/**
    * @inheritDoc
    */
@@ -39,8 +41,6 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal-posit
 
 			this.eventHandler_ = new _EventHandler['default']();
 		}
-
-		_inherits(Tooltip, _SoyComponent);
 
 		_createClass(Tooltip, [{
 			key: 'attached',

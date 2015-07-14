@@ -20,14 +20,14 @@ define(['exports', 'module', 'metal/src/dom/dom', 'metal/src/component/Component
 	var _SoyComponent2 = _interopRequireDefault(_metalSrcSoySoyComponent);
 
 	var Dropdown = (function (_SoyComponent) {
+		_inherits(Dropdown, _SoyComponent);
+
 		function Dropdown(opt_config) {
 			_classCallCheck(this, Dropdown);
 
 			_get(Object.getPrototypeOf(Dropdown.prototype), 'constructor', this).call(this, opt_config);
 			this.eventHandler_ = new _EventHandler['default']();
 		}
-
-		_inherits(Dropdown, _SoyComponent);
 
 		_createClass(Dropdown, [{
 			key: 'attached',

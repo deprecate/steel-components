@@ -90,6 +90,8 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
   */
 
 	var Component = (function (_Attribute) {
+		_inherits(Component, _Attribute);
+
 		function Component(opt_config) {
 			_classCallCheck(this, Component);
 
@@ -183,14 +185,12 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			_core['default'].mergeSuperClassesProperty(this.constructor, 'ELEMENT_CLASSES', this.mergeElementClasses_);
 			_core['default'].mergeSuperClassesProperty(this.constructor, 'ELEMENT_TAG_NAME', _array['default'].firstDefinedValue);
 			_core['default'].mergeSuperClassesProperty(this.constructor, 'SURFACE_TAG_NAME', _array['default'].firstDefinedValue);
-			this.addSurfacesFromStaticHint_();
+			this.addSurfacesFromStaticHint_(opt_config);
 
 			this.delegateEventHandler_ = new _EventHandler['default']();
 
 			this.created_();
 		}
-
-		_inherits(Component, _Attribute);
 
 		_createClass(Component, [{
 			key: 'addListenersFromObj_',
@@ -210,6 +210,20 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 					if (fn) {
 						this.eventsAttrHandler_.add(this.on(eventNames[i], fn));
 					}
+				}
+			}
+		}, {
+			key: 'addMissingAttr_',
+
+			/**
+    * Adds a simple attribute with the given name, if it doesn't exist yet.
+    * @param {string} attrName
+    * @param {Object=} opt_initialValue Optional initial value for the new attr.
+    * @protected
+    */
+			value: function addMissingAttr_(attrName, initialValue) {
+				if (!this.getAttrConfig(attrName)) {
+					this.addAttr(attrName, {}, initialValue);
 				}
 			}
 		}, {
@@ -239,16 +253,17 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * Registers a surface to the component. Surface elements are not
     * automatically appended to the component element.
     * @param {string} surfaceId The surface id to be registered.
-    * @param {Object=} opt_config Optional surface configuration.
+    * @param {Object=} opt_surfaceConfig Optional surface configuration.
+    * @param {Object=} opt_config Optional component configuration.
     * @chainable
     */
-			value: function addSurface(surfaceId, opt_config) {
-				var config = opt_config || {};
+			value: function addSurface(surfaceId, opt_surfaceConfig, opt_config) {
+				var config = opt_surfaceConfig || {};
 				this.surfaces_[surfaceId] = config;
 				if (config.componentName) {
 					this.createSubComponent_(config.componentName, surfaceId);
 				}
-				this.cacheSurfaceRenderAttrs_(surfaceId);
+				this.cacheSurfaceRenderAttrs_(surfaceId, opt_config);
 				return this;
 			}
 		}, {
@@ -272,16 +287,17 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 
 			/**
     * Adds surfaces from super classes static hint.
+    * @param {Object=} opt_config This component's configuration object.
     * @protected
     */
-			value: function addSurfacesFromStaticHint_() {
+			value: function addSurfacesFromStaticHint_(opt_config) {
 				_core['default'].mergeSuperClassesProperty(this.constructor, 'SURFACES', this.mergeObjects_);
 				this.surfaces_ = {};
 				this.surfacesRenderAttrs_ = {};
 
 				var configs = this.constructor.SURFACES_MERGED;
 				for (var surfaceId in configs) {
-					this.addSurface(surfaceId, _object['default'].mixin({}, configs[surfaceId]));
+					this.addSurface(surfaceId, _object['default'].mixin({}, configs[surfaceId]), opt_config);
 				}
 			}
 		}, {
@@ -320,7 +336,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * @protected
     */
 			value: function attachInlineListeners_() {
-				this.eventsCollector_.attachListeners(this.getElementContent_());
+				this.eventsCollector_.attachListeners(this.getElementContent_(''));
 				this.elementContent_ = null;
 			}
 		}, {
@@ -371,14 +387,31 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * Relevant for performance to calculate the surfaces group that were
     * modified by attributes mutation.
     * @param {string} surfaceId The surface id to be cached into the flat map.
+    * @param {Object=} opt_config Optional component configuration.
     * @protected
     */
-			value: function cacheSurfaceRenderAttrs_(surfaceId) {
+			value: function cacheSurfaceRenderAttrs_(surfaceId, opt_config) {
 				var attrs = this.getSurface(surfaceId).renderAttrs || [];
 				for (var i = 0; i < attrs.length; i++) {
-					this.surfacesRenderAttrs_[attrs[i]] = this.surfacesRenderAttrs_[attrs[i]] || {};
+					if (!this.surfacesRenderAttrs_[attrs[i]]) {
+						this.surfacesRenderAttrs_[attrs[i]] = {};
+						this.addMissingAttr_(attrs[i], opt_config ? opt_config[attrs[i]] : null);
+					}
 					this.surfacesRenderAttrs_[attrs[i]][surfaceId] = true;
 				}
+			}
+		}, {
+			key: 'checkHasElementTag_',
+
+			/**
+    * Checks if the given content has an element tag with the given id.
+    * @param {!Element|string} content
+    * @param {string} id
+    * @return {boolean}
+    * @protected
+    */
+			value: function checkHasElementTag_(content, id) {
+				return _core['default'].isString(content) ? content.indexOf(' id="' + id + '"') !== -1 : content.id === id;
 			}
 		}, {
 			key: 'clearSurfacesCache_',
@@ -436,7 +469,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			value: function computeSurfacesCacheStateFromDom_() {
 				for (var surfaceId in this.surfaces_) {
 					if (!this.getSurface(surfaceId).componentName) {
-						this.cacheSurfaceContent(surfaceId, _html['default'].compress(this.getSurfaceElement(surfaceId).innerHTML));
+						this.cacheSurfaceContent(surfaceId, _html['default'].compress(this.getSurfaceElement(surfaceId).outerHTML));
 					}
 				}
 			}
@@ -643,8 +676,10 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				var ids = Object.keys(this.components);
 				for (var i = 0; i < ids.length; i++) {
 					var component = this.components[ids[i]];
-					Component.componentsCollector.removeComponent(component);
-					component.dispose();
+					if (!component.isDisposed()) {
+						Component.componentsCollector.removeComponent(component);
+						component.dispose();
+					}
 				}
 				this.components = null;
 			}
@@ -761,7 +796,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * @return {string}
     */
 			value: function getComponentHtml(content) {
-				return this.getWrapperHtml_(this.constructor.ELEMENT_TAG_NAME_MERGED, this.id, content);
+				return this.wrapContentIfNecessary(content, this.id, this.constructor.ELEMENT_TAG_NAME_MERGED);
 			}
 		}, {
 			key: 'getElementContent',
@@ -771,7 +806,8 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * Should be implemented by subclasses.
     * @return {Object|string} The content to be rendered. If the content is a
     *   string, surfaces can be represented by placeholders in the format specified
-    *   by Component.SURFACE_REGEX.
+    *   by Component.SURFACE_REGEX. Also, if the string content's main wrapper has
+    *   the component's id, then it will be used to render the main element tag.
     */
 			value: function getElementContent() {}
 		}, {
@@ -810,7 +846,9 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			value: function getModifiedSurfacesFromChanges_(changes) {
 				var surfaces = [];
 				for (var attr in changes) {
-					surfaces.push(this.surfacesRenderAttrs_[attr]);
+					if (this.surfacesRenderAttrs_[attr]) {
+						surfaces.push(this.surfacesRenderAttrs_[attr]);
+					}
 				}
 				return _object['default'].mixin.apply(null, surfaces);
 			}
@@ -825,7 +863,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     */
 			value: function getNonComponentSurfaceHtml(surfaceId, content) {
 				var surfaceElementId = this.makeSurfaceId_(surfaceId);
-				return this.getWrapperHtml_(this.constructor.SURFACE_TAG_NAME_MERGED, surfaceElementId, content);
+				return this.wrapContentIfNecessary(content, surfaceElementId, this.constructor.SURFACE_TAG_NAME_MERGED);
 			}
 		}, {
 			key: 'getSurface',
@@ -919,20 +957,6 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				}
 			}
 		}, {
-			key: 'getWrapperHtml_',
-
-			/**
-    * Gets the html of an element.
-    * @param {string} tag
-    * @param {string} id
-    * @param {string} content
-    * @return {string}
-    * @protected
-    */
-			value: function getWrapperHtml_(tag, id, content) {
-				return '<' + tag + ' id="' + id + '">' + content + '</' + tag + '>';
-			}
-		}, {
 			key: 'getSurfaces',
 
 			/**
@@ -1002,8 +1026,14 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * @protected
     */
 			value: function mergeElementClasses_(values) {
+				var marked = {};
 				return values.filter(function (val) {
-					return val;
+					if (!val || marked[val]) {
+						return false;
+					} else {
+						marked[val] = true;
+						return true;
+					}
 				}).join(' ');
 			}
 		}, {
@@ -1122,6 +1152,33 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				}
 			}
 		}, {
+			key: 'renderContent_',
+
+			/**
+    * Renders the given content in the component's element.
+    * @param {string} content The content to be rendered.
+    * @protected
+    */
+			value: function renderContent_(content) {
+				var element = this.element;
+				var newElement;
+
+				if (_core['default'].isString(content)) {
+					content = _dom['default'].buildFragment(content);
+					if (content.childNodes[0].id === this.id) {
+						newElement = content.childNodes[0];
+					}
+				} else if (content.id === this.id) {
+					newElement = content;
+				}
+
+				if (newElement) {
+					this.updateElementAttributes_(element, newElement);
+					content = newElement.childNodes;
+				}
+				_dom['default'].append(element, content);
+			}
+		}, {
 			key: 'renderElement_',
 
 			/**
@@ -1152,7 +1209,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			value: function renderInternal() {
 				var content = this.getElementExtendedContent();
 				if (content) {
-					_dom['default'].append(this.element, content);
+					this.renderContent_(content);
 				}
 			}
 		}, {
@@ -1250,10 +1307,22 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
     * @protected
     */
 			value: function replaceSurfaceContent_(surfaceId, content) {
-				content = this.replaceSurfacePlaceholders_(content, surfaceId);
+				var elementId = this.makeSurfaceId_(surfaceId);
 				var el = this.getSurfaceElement(surfaceId);
-				_dom['default'].removeChildren(el);
-				_dom['default'].append(el, content);
+				content = this.replaceSurfacePlaceholders_(content);
+				if (this.checkHasElementTag_(content, elementId)) {
+					var surface = this.getSurface(surfaceId);
+					surface.element = content;
+					if (_core['default'].isString(content)) {
+						surface.element = _dom['default'].buildFragment(content).childNodes[0];
+					}
+					if (el.parentNode) {
+						_dom['default'].replace(el, surface.element);
+					}
+				} else {
+					_dom['default'].removeChildren(el);
+					_dom['default'].append(el, content);
+				}
 			}
 		}, {
 			key: 'replaceSurfacePlaceholders_',
@@ -1279,15 +1348,15 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 					instance.getSurface(id).handled = true;
 
 					var surfaceContent = instance.getSurfaceContent_(id);
-					var expandedContent = instance.replaceSurfacePlaceholders_(surfaceContent, id);
-					var surfaceHtml = instance.getSurfaceHtml(id, expandedContent);
+					var surfaceHtml = instance.getSurfaceHtml(id, surfaceContent);
+					var expandedHtml = instance.replaceSurfacePlaceholders_(surfaceHtml, id);
 					instance.collectedSurfaces_.push({
 						cacheContent: surfaceContent,
-						content: expandedContent,
+						content: expandedHtml,
 						surfaceId: id
 					});
 
-					return surfaceHtml;
+					return expandedHtml;
 				});
 			}
 		}, {
@@ -1336,6 +1405,29 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 				this.element.style.display = newVal ? '' : 'none';
 			}
 		}, {
+			key: 'updateElementAttributes_',
+
+			/**
+    * Sets the attributes from the second element to the first element.
+    * @param {!Element} element
+    * @param {!Element} newElement
+    * @protected
+    */
+			value: function updateElementAttributes_(element, newElement) {
+				var attrs = newElement.attributes;
+				for (var i = 0; i < attrs.length; i++) {
+					// The "id" and "class" html attributes are already synced via the "id"
+					// and "elementClasses" component attributes, respectively.
+					if (attrs[i].name !== 'id' && attrs[i].name !== 'class') {
+						element.setAttribute(attrs[i].name, attrs[i].value);
+					}
+				}
+
+				if (element.tagName !== newElement.tagName) {
+					console.error('Changing the component element\'s tag name is not allowed. Make sure ' + 'to always return the same tag name for the component element on getElementContent, ' + 'as well as to set the static variable ELEMENT_TAG_NAME to the chosen value.');
+				}
+			}
+		}, {
 			key: 'updatePlaceholderSurface_',
 
 			/**
@@ -1348,16 +1440,23 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			value: function updatePlaceholderSurface_(collectedData) {
 				var surfaceId = collectedData.surfaceId;
 				var surface = this.getSurface(surfaceId);
-				if (this.decorating_ || surface.element || surface.componentName) {
-					// This surface already has an element, so it needs to replace the rendered
-					// element.
-					var elementId = surface.componentName ? surfaceId : this.makeSurfaceId_(surfaceId);
-					var placeholder = this.findElementById_(elementId);
-					_dom['default'].replace(placeholder, this.getSurfaceElement(surfaceId));
+				if (surface.componentName) {
+					// Elements of component surfaces are unchangeable, so we need to replace the
+					// rendered element with the component's.
+					_dom['default'].replace(this.findElementById_(surfaceId), this.getSurfaceElement(surfaceId));
+				}
+
+				if (this.decorating_ || surface.componentName) {
+					// Component surfaces need to be handled in case some internal details have changed.
+					// Also, if this component is being decorated, it needs to go through the regular flow
+					// to check if the cache matches.
 					this.renderSurfaceContent(surfaceId, collectedData.content, collectedData.cacheContent);
 				} else {
-					// This surface's element hasn't been created yet, so it doesn't need
-					// to replace the rendered element. Let's cache the content so it won't rerender.
+					// This surface's element has either changed or never been created yet. Let's just
+					// reset it to null, so it can be fetched from the dom again when necessary. Also,
+					// since there's no need to do cache checks or rerender, let's just attach its
+					// listeners and cache its content manually.
+					surface.element = null;
 					this.cacheSurfaceContent(surfaceId, collectedData.cacheContent);
 					this.eventsCollector_.attachListeners(collectedData.cacheContent, surfaceId);
 				}
@@ -1446,6 +1545,24 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			value: function valueIdFn_() {
 				var element = this.element;
 				return element && element.id ? element.id : this.makeId_();
+			}
+		}, {
+			key: 'wrapContentIfNecessary',
+
+			/**
+    * Wraps the content with the given tag, unless the content already has an element with the
+    * correct id.
+    * @param {string} content
+    * @param {string} id
+    * @param {string} tag
+    * @return {string}
+    * @protected
+    */
+			value: function wrapContentIfNecessary(content, id, tag) {
+				if (!this.checkHasElementTag_(content, id)) {
+					content = '<' + tag + ' id="' + id + '">' + content + '</' + tag + '>';
+				}
+				return content;
 			}
 		}]);
 

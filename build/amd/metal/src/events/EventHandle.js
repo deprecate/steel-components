@@ -27,6 +27,8 @@ define(['exports', 'module', 'metal/src/disposable/Disposable'], function (expor
   */
 
 	var EventHandle = (function (_Disposable) {
+		_inherits(EventHandle, _Disposable);
+
 		function EventHandle(emitter, event, listener) {
 			_classCallCheck(this, EventHandle);
 
@@ -53,8 +55,6 @@ define(['exports', 'module', 'metal/src/disposable/Disposable'], function (expor
     */
 			this.listener_ = listener;
 		}
-
-		_inherits(EventHandle, _Disposable);
 
 		_createClass(EventHandle, [{
 			key: 'disposeInternal',

@@ -20,13 +20,13 @@ define(['exports', 'module', 'metal/src/soy/SoyComponent', 'metal/src/component/
   */
 
 	var List = (function (_SoyComponent) {
+		_inherits(List, _SoyComponent);
+
 		function List(opt_config) {
 			_classCallCheck(this, List);
 
 			_get(Object.getPrototypeOf(List.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(List, _SoyComponent);
 
 		_createClass(List, [{
 			key: 'handleClick',

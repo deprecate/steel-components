@@ -31,6 +31,8 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
   */
 
 	var Attribute = (function (_EventEmitter) {
+		_inherits(Attribute, _EventEmitter);
+
 		function Attribute(opt_config) {
 			_classCallCheck(this, Attribute);
 
@@ -55,8 +57,6 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			this.mergeInvalidAttrs_();
 			this.addAttrsFromStaticHint_(opt_config);
 		}
-
-		_inherits(Attribute, _EventEmitter);
 
 		_createClass(Attribute, [{
 			key: 'addAttr',
@@ -294,7 +294,7 @@ define(['exports', 'module', 'metal/src/array/array', 'metal/src/core', 'metal/s
 			/**
     * Gets the config object for the requested attribute.
     * @param {string} name The attribute's name.
-    * @return {!Object}
+    * @return {Object}
     * @protected
     */
 			value: function getAttrConfig(name) {

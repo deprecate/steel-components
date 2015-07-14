@@ -24,6 +24,8 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/disposable/Disposable'
   */
 
 	var EventEmitter = (function (_Disposable) {
+		_inherits(EventEmitter, _Disposable);
+
 		function EventEmitter() {
 			_classCallCheck(this, EventEmitter);
 
@@ -53,8 +55,6 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/disposable/Disposable'
     */
 			this.shouldUseFacade_ = false;
 		}
-
-		_inherits(EventEmitter, _Disposable);
 
 		_createClass(EventEmitter, [{
 			key: 'addListener',

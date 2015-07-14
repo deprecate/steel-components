@@ -22,13 +22,13 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
   */
 
 	var Treeview = (function (_SoyComponent) {
+		_inherits(Treeview, _SoyComponent);
+
 		function Treeview(opt_config) {
 			_classCallCheck(this, Treeview);
 
 			_get(Object.getPrototypeOf(Treeview.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(Treeview, _SoyComponent);
 
 		_createClass(Treeview, [{
 			key: 'attached',

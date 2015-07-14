@@ -34,6 +34,8 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/d
   */
 
 	var EventEmitterProxy = (function (_Disposable) {
+		_inherits(EventEmitterProxy, _Disposable);
+
 		function EventEmitterProxy(originEmitter, targetEmitter, opt_blacklist, opt_whitelist) {
 			_classCallCheck(this, EventEmitterProxy);
 
@@ -79,8 +81,6 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/d
 			this.startProxy_();
 		}
 
-		_inherits(EventEmitterProxy, _Disposable);
-
 		_createClass(EventEmitterProxy, [{
 			key: 'disposeInternal',
 
@@ -115,7 +115,7 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/d
 					self.targetEmitter_.emit.apply(self.targetEmitter_, args);
 				};
 
-				if (_core['default'].isElement(this.originEmitter_)) {
+				if (_core['default'].isElement(this.originEmitter_) || _core['default'].isDocument(this.originEmitter_)) {
 					_dom['default'].on(this.originEmitter_, event, this.proxiedEvents_[event]);
 				} else {
 					this.originEmitter_.on(event, this.proxiedEvents_[event]);

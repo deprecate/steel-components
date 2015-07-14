@@ -24,13 +24,13 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/s
   */
 
 	var Switcher = (function (_SoyComponent) {
+		_inherits(Switcher, _SoyComponent);
+
 		function Switcher(opt_config) {
 			_classCallCheck(this, Switcher);
 
 			_get(Object.getPrototypeOf(Switcher.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(Switcher, _SoyComponent);
 
 		_createClass(Switcher, [{
 			key: 'attached',

@@ -26,13 +26,13 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/s
   */
 
 	var Alert = (function (_SoyComponent) {
+		_inherits(Alert, _SoyComponent);
+
 		function Alert(opt_config) {
 			_classCallCheck(this, Alert);
 
 			_get(Object.getPrototypeOf(Alert.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(Alert, _SoyComponent);
 
 		_createClass(Alert, [{
 			key: 'close',

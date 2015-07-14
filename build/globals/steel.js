@@ -462,6 +462,8 @@ this.steelNamed = {};
   */
 
 	var EventHandle = (function (_Disposable) {
+		babelHelpers.inherits(EventHandle, _Disposable);
+
 		function EventHandle(emitter, event, listener) {
 			babelHelpers.classCallCheck(this, EventHandle);
 
@@ -489,7 +491,6 @@ this.steelNamed = {};
 			this.listener_ = listener;
 		}
 
-		babelHelpers.inherits(EventHandle, _Disposable);
 		babelHelpers.createClass(EventHandle, [{
 			key: 'disposeInternal',
 
@@ -535,13 +536,14 @@ this.steelNamed = {};
   */
 
 	var DomEventHandle = (function (_EventHandle) {
+		babelHelpers.inherits(DomEventHandle, _EventHandle);
+
 		function DomEventHandle(emitter, event, listener) {
 			babelHelpers.classCallCheck(this, DomEventHandle);
 
 			babelHelpers.get(Object.getPrototypeOf(DomEventHandle.prototype), 'constructor', this).call(this, emitter, event, listener);
 		}
 
-		babelHelpers.inherits(DomEventHandle, _EventHandle);
 		babelHelpers.createClass(DomEventHandle, [{
 			key: 'removeListener',
 
@@ -637,14 +639,22 @@ this.steelNamed = {};
     * child is a HTML string it will be automatically converted to a document
     * fragment before appending it to the parent.
     * @param {!Element} parent The node to append nodes to.
-    * @param {!Element|String} child The thing to append to the parent.
+    * @param {!(Element|NodeList|string)} child The thing to append to the parent.
     * @return {!Element} The appended child.
     */
 			value: function append(parent, child) {
 				if (core.isString(child)) {
 					child = dom.buildFragment(child);
 				}
-				return parent.appendChild(child);
+				if (child instanceof NodeList) {
+					var childArr = Array.prototype.slice.call(child);
+					for (var i = 0; i < childArr.length; i++) {
+						parent.appendChild(childArr[i]);
+					}
+				} else {
+					parent.appendChild(child);
+				}
+				return child;
 			}
 		}, {
 			key: 'buildFragment',
@@ -1725,6 +1735,8 @@ this.steelNamed = {};
   */
 
 	var EventEmitter = (function (_Disposable) {
+		babelHelpers.inherits(EventEmitter, _Disposable);
+
 		function EventEmitter() {
 			babelHelpers.classCallCheck(this, EventEmitter);
 
@@ -1755,7 +1767,6 @@ this.steelNamed = {};
 			this.shouldUseFacade_ = false;
 		}
 
-		babelHelpers.inherits(EventEmitter, _Disposable);
 		babelHelpers.createClass(EventEmitter, [{
 			key: 'addListener',
 
@@ -2337,6 +2348,8 @@ this.steelNamed = {};
   */
 
 	var Attribute = (function (_EventEmitter) {
+		babelHelpers.inherits(Attribute, _EventEmitter);
+
 		function Attribute(opt_config) {
 			babelHelpers.classCallCheck(this, Attribute);
 
@@ -2362,7 +2375,6 @@ this.steelNamed = {};
 			this.addAttrsFromStaticHint_(opt_config);
 		}
 
-		babelHelpers.inherits(Attribute, _EventEmitter);
 		babelHelpers.createClass(Attribute, [{
 			key: 'addAttr',
 
@@ -2599,7 +2611,7 @@ this.steelNamed = {};
 			/**
     * Gets the config object for the requested attribute.
     * @param {string} name The attribute's name.
-    * @return {!Object}
+    * @return {Object}
     * @protected
     */
 			value: function getAttrConfig(name) {
@@ -2988,6 +3000,8 @@ this.steelNamed = {};
 	var Disposable = this.steel.Disposable;
 
 	var ComponentCollector = (function (_Disposable) {
+		babelHelpers.inherits(ComponentCollector, _Disposable);
+
 		function ComponentCollector() {
 			babelHelpers.classCallCheck(this, ComponentCollector);
 
@@ -3000,7 +3014,6 @@ this.steelNamed = {};
 			this.nextComponentData_ = {};
 		}
 
-		babelHelpers.inherits(ComponentCollector, _Disposable);
 		babelHelpers.createClass(ComponentCollector, [{
 			key: 'addComponent',
 
@@ -3119,6 +3132,8 @@ this.steelNamed = {};
   */
 
 	var EventEmitterProxy = (function (_Disposable) {
+		babelHelpers.inherits(EventEmitterProxy, _Disposable);
+
 		function EventEmitterProxy(originEmitter, targetEmitter, opt_blacklist, opt_whitelist) {
 			babelHelpers.classCallCheck(this, EventEmitterProxy);
 
@@ -3164,7 +3179,6 @@ this.steelNamed = {};
 			this.startProxy_();
 		}
 
-		babelHelpers.inherits(EventEmitterProxy, _Disposable);
 		babelHelpers.createClass(EventEmitterProxy, [{
 			key: 'disposeInternal',
 
@@ -3199,7 +3213,7 @@ this.steelNamed = {};
 					self.targetEmitter_.emit.apply(self.targetEmitter_, args);
 				};
 
-				if (core.isElement(this.originEmitter_)) {
+				if (core.isElement(this.originEmitter_) || core.isDocument(this.originEmitter_)) {
 					dom.on(this.originEmitter_, event, this.proxiedEvents_[event]);
 				} else {
 					this.originEmitter_.on(event, this.proxiedEvents_[event]);
@@ -3252,6 +3266,8 @@ this.steelNamed = {};
   */
 
 	var EventHandler = (function (_Disposable) {
+		babelHelpers.inherits(EventHandler, _Disposable);
+
 		function EventHandler() {
 			babelHelpers.classCallCheck(this, EventHandler);
 
@@ -3266,7 +3282,6 @@ this.steelNamed = {};
 			this.eventHandles_ = [];
 		}
 
-		babelHelpers.inherits(EventHandler, _Disposable);
 		babelHelpers.createClass(EventHandler, [{
 			key: 'add',
 
@@ -3315,6 +3330,7 @@ this.steelNamed = {};
 	var core = this.steel.core;
 	var ComponentCollector = this.steel.ComponentCollector;
 	var Disposable = this.steel.Disposable;
+	var EventHandler = this.steel.EventHandler;
 
 	/**
   * Collects inline events from a passed element, detaching previously
@@ -3325,6 +3341,8 @@ this.steelNamed = {};
   */
 
 	var EventsCollector = (function (_Disposable) {
+		babelHelpers.inherits(EventsCollector, _Disposable);
+
 		function EventsCollector(component) {
 			babelHelpers.classCallCheck(this, EventsCollector);
 
@@ -3343,7 +3361,7 @@ this.steelNamed = {};
 
 			/**
     * Holds the attached delegate event handles, indexed by the css selector.
-    * @type {!Object<string, !DomEventHandle>}
+    * @type {!Object<string, EventHandler>}
     * @protected
     */
 			this.eventHandles_ = {};
@@ -3356,7 +3374,6 @@ this.steelNamed = {};
 			this.groupHasListener_ = {};
 		}
 
-		babelHelpers.inherits(EventsCollector, _Disposable);
 		babelHelpers.createClass(EventsCollector, [{
 			key: 'attachListener_',
 
@@ -3364,19 +3381,23 @@ this.steelNamed = {};
     * Attaches the listener described by the given params, unless it has already
     * been attached.
     * @param {string} eventType
-    * @param {string} fnName
+    * @param {string} fnNamesString
     * @param {boolean} permanent
     * @protected
     */
-			value: function attachListener_(eventType, fnName, groupName) {
-				var selector = '[data-on' + eventType + '="' + fnName + '"]';
+			value: function attachListener_(eventType, fnNamesString, groupName) {
+				var selector = '[data-on' + eventType + '="' + fnNamesString + '"]';
 
 				this.groupHasListener_[groupName][selector] = true;
 
 				if (!this.eventHandles_[selector]) {
-					var fn = this.getListenerFn(fnName);
-					if (fn) {
-						this.eventHandles_[selector] = this.component_.delegate(eventType, selector, this.onEvent_.bind(this, fn));
+					this.eventHandles_[selector] = new EventHandler();
+					var fnNames = fnNamesString.split(',');
+					for (var i = 0; i < fnNames.length; i++) {
+						var fn = this.getListenerFn(fnNames[i]);
+						if (fn) {
+							this.eventHandles_[selector].add(this.component_.delegate(eventType, selector, this.onEvent_.bind(this, fn)));
+						}
 					}
 				}
 			}
@@ -3425,7 +3446,7 @@ this.steelNamed = {};
 			value: function detachAllListeners() {
 				for (var selector in this.eventHandles_) {
 					if (this.eventHandles_[selector]) {
-						this.eventHandles_[selector].removeListener();
+						this.eventHandles_[selector].removeAllListeners();
 					}
 				}
 				this.eventHandles_ = {};
@@ -3449,7 +3470,7 @@ this.steelNamed = {};
 							}
 						}
 						if (unused) {
-							this.eventHandles_[selector].removeListener();
+							this.eventHandles_[selector].removeAllListeners();
 							this.eventHandles_[selector] = null;
 						}
 					}
@@ -3491,6 +3512,18 @@ this.steelNamed = {};
 				} else {
 					console.error('No function named "' + fnName + '" was found in the component with id "' + fnComponent.id + '". Make sure that you specify valid function names when adding ' + 'inline listeners.');
 				}
+			}
+		}, {
+			key: 'hasAttachedForGroup',
+
+			/**
+    * Checks if this EventsCollector instance has already attached listeners for the given
+    * group before.
+    * @param  {string} group
+    * @return {boolean}
+    */
+			value: function hasAttachedForGroup(group) {
+				return !!this.groupHasListener_.hasOwnProperty(group);
 			}
 		}, {
 			key: 'onEvent_',
@@ -3589,6 +3622,8 @@ this.steelNamed = {};
   */
 
 	var Component = (function (_Attribute) {
+		babelHelpers.inherits(Component, _Attribute);
+
 		function Component(opt_config) {
 			babelHelpers.classCallCheck(this, Component);
 
@@ -3682,14 +3717,13 @@ this.steelNamed = {};
 			core.mergeSuperClassesProperty(this.constructor, 'ELEMENT_CLASSES', this.mergeElementClasses_);
 			core.mergeSuperClassesProperty(this.constructor, 'ELEMENT_TAG_NAME', array.firstDefinedValue);
 			core.mergeSuperClassesProperty(this.constructor, 'SURFACE_TAG_NAME', array.firstDefinedValue);
-			this.addSurfacesFromStaticHint_();
+			this.addSurfacesFromStaticHint_(opt_config);
 
 			this.delegateEventHandler_ = new EventHandler();
 
 			this.created_();
 		}
 
-		babelHelpers.inherits(Component, _Attribute);
 		babelHelpers.createClass(Component, [{
 			key: 'addListenersFromObj_',
 
@@ -3708,6 +3742,20 @@ this.steelNamed = {};
 					if (fn) {
 						this.eventsAttrHandler_.add(this.on(eventNames[i], fn));
 					}
+				}
+			}
+		}, {
+			key: 'addMissingAttr_',
+
+			/**
+    * Adds a simple attribute with the given name, if it doesn't exist yet.
+    * @param {string} attrName
+    * @param {Object=} opt_initialValue Optional initial value for the new attr.
+    * @protected
+    */
+			value: function addMissingAttr_(attrName, initialValue) {
+				if (!this.getAttrConfig(attrName)) {
+					this.addAttr(attrName, {}, initialValue);
 				}
 			}
 		}, {
@@ -3737,16 +3785,17 @@ this.steelNamed = {};
     * Registers a surface to the component. Surface elements are not
     * automatically appended to the component element.
     * @param {string} surfaceId The surface id to be registered.
-    * @param {Object=} opt_config Optional surface configuration.
+    * @param {Object=} opt_surfaceConfig Optional surface configuration.
+    * @param {Object=} opt_config Optional component configuration.
     * @chainable
     */
-			value: function addSurface(surfaceId, opt_config) {
-				var config = opt_config || {};
+			value: function addSurface(surfaceId, opt_surfaceConfig, opt_config) {
+				var config = opt_surfaceConfig || {};
 				this.surfaces_[surfaceId] = config;
 				if (config.componentName) {
 					this.createSubComponent_(config.componentName, surfaceId);
 				}
-				this.cacheSurfaceRenderAttrs_(surfaceId);
+				this.cacheSurfaceRenderAttrs_(surfaceId, opt_config);
 				return this;
 			}
 		}, {
@@ -3770,16 +3819,17 @@ this.steelNamed = {};
 
 			/**
     * Adds surfaces from super classes static hint.
+    * @param {Object=} opt_config This component's configuration object.
     * @protected
     */
-			value: function addSurfacesFromStaticHint_() {
+			value: function addSurfacesFromStaticHint_(opt_config) {
 				core.mergeSuperClassesProperty(this.constructor, 'SURFACES', this.mergeObjects_);
 				this.surfaces_ = {};
 				this.surfacesRenderAttrs_ = {};
 
 				var configs = this.constructor.SURFACES_MERGED;
 				for (var surfaceId in configs) {
-					this.addSurface(surfaceId, object.mixin({}, configs[surfaceId]));
+					this.addSurface(surfaceId, object.mixin({}, configs[surfaceId]), opt_config);
 				}
 			}
 		}, {
@@ -3818,7 +3868,7 @@ this.steelNamed = {};
     * @protected
     */
 			value: function attachInlineListeners_() {
-				this.eventsCollector_.attachListeners(this.getElementContent_());
+				this.eventsCollector_.attachListeners(this.getElementContent_(''));
 				this.elementContent_ = null;
 			}
 		}, {
@@ -3869,14 +3919,31 @@ this.steelNamed = {};
     * Relevant for performance to calculate the surfaces group that were
     * modified by attributes mutation.
     * @param {string} surfaceId The surface id to be cached into the flat map.
+    * @param {Object=} opt_config Optional component configuration.
     * @protected
     */
-			value: function cacheSurfaceRenderAttrs_(surfaceId) {
+			value: function cacheSurfaceRenderAttrs_(surfaceId, opt_config) {
 				var attrs = this.getSurface(surfaceId).renderAttrs || [];
 				for (var i = 0; i < attrs.length; i++) {
-					this.surfacesRenderAttrs_[attrs[i]] = this.surfacesRenderAttrs_[attrs[i]] || {};
+					if (!this.surfacesRenderAttrs_[attrs[i]]) {
+						this.surfacesRenderAttrs_[attrs[i]] = {};
+						this.addMissingAttr_(attrs[i], opt_config ? opt_config[attrs[i]] : null);
+					}
 					this.surfacesRenderAttrs_[attrs[i]][surfaceId] = true;
 				}
+			}
+		}, {
+			key: 'checkHasElementTag_',
+
+			/**
+    * Checks if the given content has an element tag with the given id.
+    * @param {!Element|string} content
+    * @param {string} id
+    * @return {boolean}
+    * @protected
+    */
+			value: function checkHasElementTag_(content, id) {
+				return core.isString(content) ? content.indexOf(' id="' + id + '"') !== -1 : content.id === id;
 			}
 		}, {
 			key: 'clearSurfacesCache_',
@@ -3934,7 +4001,7 @@ this.steelNamed = {};
 			value: function computeSurfacesCacheStateFromDom_() {
 				for (var surfaceId in this.surfaces_) {
 					if (!this.getSurface(surfaceId).componentName) {
-						this.cacheSurfaceContent(surfaceId, html.compress(this.getSurfaceElement(surfaceId).innerHTML));
+						this.cacheSurfaceContent(surfaceId, html.compress(this.getSurfaceElement(surfaceId).outerHTML));
 					}
 				}
 			}
@@ -4141,8 +4208,10 @@ this.steelNamed = {};
 				var ids = Object.keys(this.components);
 				for (var i = 0; i < ids.length; i++) {
 					var component = this.components[ids[i]];
-					Component.componentsCollector.removeComponent(component);
-					component.dispose();
+					if (!component.isDisposed()) {
+						Component.componentsCollector.removeComponent(component);
+						component.dispose();
+					}
 				}
 				this.components = null;
 			}
@@ -4259,7 +4328,7 @@ this.steelNamed = {};
     * @return {string}
     */
 			value: function getComponentHtml(content) {
-				return this.getWrapperHtml_(this.constructor.ELEMENT_TAG_NAME_MERGED, this.id, content);
+				return this.wrapContentIfNecessary(content, this.id, this.constructor.ELEMENT_TAG_NAME_MERGED);
 			}
 		}, {
 			key: 'getElementContent',
@@ -4269,7 +4338,8 @@ this.steelNamed = {};
     * Should be implemented by subclasses.
     * @return {Object|string} The content to be rendered. If the content is a
     *   string, surfaces can be represented by placeholders in the format specified
-    *   by Component.SURFACE_REGEX.
+    *   by Component.SURFACE_REGEX. Also, if the string content's main wrapper has
+    *   the component's id, then it will be used to render the main element tag.
     */
 			value: function getElementContent() {}
 		}, {
@@ -4308,7 +4378,9 @@ this.steelNamed = {};
 			value: function getModifiedSurfacesFromChanges_(changes) {
 				var surfaces = [];
 				for (var attr in changes) {
-					surfaces.push(this.surfacesRenderAttrs_[attr]);
+					if (this.surfacesRenderAttrs_[attr]) {
+						surfaces.push(this.surfacesRenderAttrs_[attr]);
+					}
 				}
 				return object.mixin.apply(null, surfaces);
 			}
@@ -4323,7 +4395,7 @@ this.steelNamed = {};
     */
 			value: function getNonComponentSurfaceHtml(surfaceId, content) {
 				var surfaceElementId = this.makeSurfaceId_(surfaceId);
-				return this.getWrapperHtml_(this.constructor.SURFACE_TAG_NAME_MERGED, surfaceElementId, content);
+				return this.wrapContentIfNecessary(content, surfaceElementId, this.constructor.SURFACE_TAG_NAME_MERGED);
 			}
 		}, {
 			key: 'getSurface',
@@ -4417,20 +4489,6 @@ this.steelNamed = {};
 				}
 			}
 		}, {
-			key: 'getWrapperHtml_',
-
-			/**
-    * Gets the html of an element.
-    * @param {string} tag
-    * @param {string} id
-    * @param {string} content
-    * @return {string}
-    * @protected
-    */
-			value: function getWrapperHtml_(tag, id, content) {
-				return '<' + tag + ' id="' + id + '">' + content + '</' + tag + '>';
-			}
-		}, {
 			key: 'getSurfaces',
 
 			/**
@@ -4500,8 +4558,14 @@ this.steelNamed = {};
     * @protected
     */
 			value: function mergeElementClasses_(values) {
+				var marked = {};
 				return values.filter(function (val) {
-					return val;
+					if (!val || marked[val]) {
+						return false;
+					} else {
+						marked[val] = true;
+						return true;
+					}
 				}).join(' ');
 			}
 		}, {
@@ -4620,6 +4684,33 @@ this.steelNamed = {};
 				}
 			}
 		}, {
+			key: 'renderContent_',
+
+			/**
+    * Renders the given content in the component's element.
+    * @param {string} content The content to be rendered.
+    * @protected
+    */
+			value: function renderContent_(content) {
+				var element = this.element;
+				var newElement;
+
+				if (core.isString(content)) {
+					content = dom.buildFragment(content);
+					if (content.childNodes[0].id === this.id) {
+						newElement = content.childNodes[0];
+					}
+				} else if (content.id === this.id) {
+					newElement = content;
+				}
+
+				if (newElement) {
+					this.updateElementAttributes_(element, newElement);
+					content = newElement.childNodes;
+				}
+				dom.append(element, content);
+			}
+		}, {
 			key: 'renderElement_',
 
 			/**
@@ -4650,7 +4741,7 @@ this.steelNamed = {};
 			value: function renderInternal() {
 				var content = this.getElementExtendedContent();
 				if (content) {
-					dom.append(this.element, content);
+					this.renderContent_(content);
 				}
 			}
 		}, {
@@ -4748,10 +4839,22 @@ this.steelNamed = {};
     * @protected
     */
 			value: function replaceSurfaceContent_(surfaceId, content) {
-				content = this.replaceSurfacePlaceholders_(content, surfaceId);
+				var elementId = this.makeSurfaceId_(surfaceId);
 				var el = this.getSurfaceElement(surfaceId);
-				dom.removeChildren(el);
-				dom.append(el, content);
+				content = this.replaceSurfacePlaceholders_(content);
+				if (this.checkHasElementTag_(content, elementId)) {
+					var surface = this.getSurface(surfaceId);
+					surface.element = content;
+					if (core.isString(content)) {
+						surface.element = dom.buildFragment(content).childNodes[0];
+					}
+					if (el.parentNode) {
+						dom.replace(el, surface.element);
+					}
+				} else {
+					dom.removeChildren(el);
+					dom.append(el, content);
+				}
 			}
 		}, {
 			key: 'replaceSurfacePlaceholders_',
@@ -4777,15 +4880,15 @@ this.steelNamed = {};
 					instance.getSurface(id).handled = true;
 
 					var surfaceContent = instance.getSurfaceContent_(id);
-					var expandedContent = instance.replaceSurfacePlaceholders_(surfaceContent, id);
-					var surfaceHtml = instance.getSurfaceHtml(id, expandedContent);
+					var surfaceHtml = instance.getSurfaceHtml(id, surfaceContent);
+					var expandedHtml = instance.replaceSurfacePlaceholders_(surfaceHtml, id);
 					instance.collectedSurfaces_.push({
 						cacheContent: surfaceContent,
-						content: expandedContent,
+						content: expandedHtml,
 						surfaceId: id
 					});
 
-					return surfaceHtml;
+					return expandedHtml;
 				});
 			}
 		}, {
@@ -4834,6 +4937,29 @@ this.steelNamed = {};
 				this.element.style.display = newVal ? '' : 'none';
 			}
 		}, {
+			key: 'updateElementAttributes_',
+
+			/**
+    * Sets the attributes from the second element to the first element.
+    * @param {!Element} element
+    * @param {!Element} newElement
+    * @protected
+    */
+			value: function updateElementAttributes_(element, newElement) {
+				var attrs = newElement.attributes;
+				for (var i = 0; i < attrs.length; i++) {
+					// The "id" and "class" html attributes are already synced via the "id"
+					// and "elementClasses" component attributes, respectively.
+					if (attrs[i].name !== 'id' && attrs[i].name !== 'class') {
+						element.setAttribute(attrs[i].name, attrs[i].value);
+					}
+				}
+
+				if (element.tagName !== newElement.tagName) {
+					console.error('Changing the component element\'s tag name is not allowed. Make sure ' + 'to always return the same tag name for the component element on getElementContent, ' + 'as well as to set the static variable ELEMENT_TAG_NAME to the chosen value.');
+				}
+			}
+		}, {
 			key: 'updatePlaceholderSurface_',
 
 			/**
@@ -4846,16 +4972,23 @@ this.steelNamed = {};
 			value: function updatePlaceholderSurface_(collectedData) {
 				var surfaceId = collectedData.surfaceId;
 				var surface = this.getSurface(surfaceId);
-				if (this.decorating_ || surface.element || surface.componentName) {
-					// This surface already has an element, so it needs to replace the rendered
-					// element.
-					var elementId = surface.componentName ? surfaceId : this.makeSurfaceId_(surfaceId);
-					var placeholder = this.findElementById_(elementId);
-					dom.replace(placeholder, this.getSurfaceElement(surfaceId));
+				if (surface.componentName) {
+					// Elements of component surfaces are unchangeable, so we need to replace the
+					// rendered element with the component's.
+					dom.replace(this.findElementById_(surfaceId), this.getSurfaceElement(surfaceId));
+				}
+
+				if (this.decorating_ || surface.componentName) {
+					// Component surfaces need to be handled in case some internal details have changed.
+					// Also, if this component is being decorated, it needs to go through the regular flow
+					// to check if the cache matches.
 					this.renderSurfaceContent(surfaceId, collectedData.content, collectedData.cacheContent);
 				} else {
-					// This surface's element hasn't been created yet, so it doesn't need
-					// to replace the rendered element. Let's cache the content so it won't rerender.
+					// This surface's element has either changed or never been created yet. Let's just
+					// reset it to null, so it can be fetched from the dom again when necessary. Also,
+					// since there's no need to do cache checks or rerender, let's just attach its
+					// listeners and cache its content manually.
+					surface.element = null;
 					this.cacheSurfaceContent(surfaceId, collectedData.cacheContent);
 					this.eventsCollector_.attachListeners(collectedData.cacheContent, surfaceId);
 				}
@@ -4944,6 +5077,24 @@ this.steelNamed = {};
 			value: function valueIdFn_() {
 				var element = this.element;
 				return element && element.id ? element.id : this.makeId_();
+			}
+		}, {
+			key: 'wrapContentIfNecessary',
+
+			/**
+    * Wraps the content with the given tag, unless the content already has an element with the
+    * correct id.
+    * @param {string} content
+    * @param {string} id
+    * @param {string} tag
+    * @return {string}
+    * @protected
+    */
+			value: function wrapContentIfNecessary(content, id, tag) {
+				if (!this.checkHasElementTag_(content, id)) {
+					content = '<' + tag + ' id="' + id + '">' + content + '</' + tag + '>';
+				}
+				return content;
 			}
 		}]);
 		return Component;
@@ -5100,20 +5251,111 @@ this.steelNamed = {};
 (function () {
 	'use strict';
 
+	var ComponentRegistry = this.steel.ComponentRegistry;
+
+	var SoyComponentAop = {
+		/**
+   * The function that should be called instead of a template call. If null, the original function
+   * will be called instead.
+   * @type {function()}
+   * @protected
+   */
+		interceptFn_: null,
+
+		/**
+   * Flag indicating if soy templates have already been registered for interception or not.
+   * @type {boolean}
+   * @protected
+   */
+		registeredTemplates_: false,
+
+		/**
+   * Gets the original function of the given template function. If no original exists,
+   * returns the given function itself.
+   * @param {!function()} fn
+   * @return {!function()}
+   */
+		getOriginalFn: function getOriginalFn(fn) {
+			return fn.originalFn ? fn.originalFn : fn;
+		},
+
+		/**
+   * Handles a template call, calling the current interception function if one is set, or otherwise
+   * just calling the original function instead.
+   * @param {!function()} originalFn The original template function that was intercepted.
+   * @param {string} compName The name of the component this template function belongs to.
+   * @param {string} templateName The name of the template this call was made for.
+   * @param {Object} opt_data Template data object.
+   * @param {*} opt_ignored
+   * @param {Object} opt_ijData Template injected data object.
+   * @return {*} The return value of the function that is called to handle this interception.
+   */
+		handleTemplateCall_: function handleTemplateCall_(originalFn, compName, templateName, opt_data, opt_ignored, opt_ijData) {
+			if (SoyComponentAop.interceptFn_) {
+				return SoyComponentAop.interceptFn_.call(null, compName, templateName, opt_data, opt_ignored, opt_ijData);
+			} else {
+				return originalFn.call(null, opt_data, opt_ignored, opt_ijData);
+			}
+		},
+
+		/**
+   * Registers all templates so they can be intercepted, unless they've already
+   * been registered before.
+   */
+		registerAll: function registerAll() {
+			if (!SoyComponentAop.registeredTemplates_) {
+				Object.keys(ComponentRegistry.Templates).forEach(function (compName) {
+					SoyComponentAop.registerTemplates(compName);
+				});
+				SoyComponentAop.registeredTemplates_ = true;
+			}
+		},
+
+		/**
+   * Registers the templates for the requested component so they can be intercepted.
+   * @param {string} compName
+   */
+		registerTemplates: function registerTemplates(compName) {
+			var compTemplates = ComponentRegistry.Templates[compName];
+			Object.keys(compTemplates).forEach(function (templateName) {
+				var originalFn = compTemplates[templateName];
+				if (!originalFn.originalFn) {
+					compTemplates[templateName] = SoyComponentAop.handleTemplateCall_.bind(null, originalFn, compName, templateName);
+					compTemplates[templateName].originalFn = originalFn;
+				}
+			});
+		},
+
+		/**
+   * Starts intercepting all template calls, replacing them with a call
+   * to the given function instead.
+   * @param {!function()} fn
+   */
+		startInterception: function startInterception(fn) {
+			this.registerAll();
+			SoyComponentAop.interceptFn_ = fn;
+		},
+
+		/**
+   * Stops intercepting template calls.
+   */
+		stopInterception: function stopInterception() {
+			SoyComponentAop.interceptFn_ = null;
+		}
+	};
+
+	this.steel.SoyComponentAop = SoyComponentAop;
+}).call(this);
+(function () {
+	'use strict';
+
 	var core = this.steel.core;
-	var dom = this.steel.dom;
 	var Component = this.steel.Component;
+	var ComponentRegistry = this.steel.ComponentRegistry;
+	var SoyComponentAop = this.steel.SoyComponentAop;
 
-	/**
-  * We need to listen to calls to soy deltemplates so we can use them to
-  * properly instantiate and update child components defined through soy.
-  * TODO: Switch to using proper AOP.
-  */
-	var originalGetDelegateFn;
-
-	if (typeof soy === 'object') {
-		originalGetDelegateFn = soy.$$getDelegateFn;
-	}
+	// The injected data that will be passed to soy templates.
+	var ijData = {};
 
 	/**
   * Special Component class that handles a better integration between soy templates
@@ -5126,13 +5368,14 @@ this.steelNamed = {};
   */
 
 	var SoyComponent = (function (_Component) {
+		babelHelpers.inherits(SoyComponent, _Component);
+
 		function SoyComponent(opt_config) {
 			babelHelpers.classCallCheck(this, SoyComponent);
 
 			babelHelpers.get(Object.getPrototypeOf(SoyComponent.prototype), 'constructor', this).call(this, opt_config);
 
-			core.mergeSuperClassesProperty(this.constructor, 'TEMPLATES', this.mergeObjects_);
-			this.addSurfacesFromTemplates_();
+			this.addSurfacesFromTemplates_(opt_config);
 
 			/**
     * Indicates which surface is currently being rendered, or null if none is.
@@ -5157,26 +5400,28 @@ this.steelNamed = {};
 			this.nextSurfaceCallData_ = {};
 		}
 
-		babelHelpers.inherits(SoyComponent, _Component);
 		babelHelpers.createClass(SoyComponent, [{
 			key: 'addSurfacesFromTemplates_',
 
 			/**
     * Adds surfaces for each registered template that is not named `element`.
+    * @param {Object=} opt_config Optional component configuration.
     * @protected
     */
-			value: function addSurfacesFromTemplates_() {
-				var templates = this.constructor.TEMPLATES_MERGED;
+			value: function addSurfacesFromTemplates_(opt_config) {
+				var templates = ComponentRegistry.Templates[this.constructor.NAME] || {};
 				var templateNames = Object.keys(templates);
 				for (var i = 0; i < templateNames.length; i++) {
 					var templateName = templateNames[i];
-					if (templateName !== 'content' && templateName.substr(0, 13) !== '__deltemplate') {
+					var templateFn = SoyComponentAop.getOriginalFn(templates[templateName]);
+					if (this.isSurfaceTemplate_(templateName, templateFn)) {
 						var surface = this.getSurface(templateName);
 						if (!surface) {
 							this.addSurface(templateName, {
-								renderAttrs: templates[templateName].params,
+								renderAttrs: templateFn.params,
+								templateComponentName: this.constructor.NAME,
 								templateName: templateName
-							});
+							}, opt_config);
 						}
 					}
 				}
@@ -5214,7 +5459,9 @@ this.steelNamed = {};
 			value: function buildPlaceholderSurfaceData_(type, extra) {
 				var data = babelHelpers.get(Object.getPrototypeOf(SoyComponent.prototype), 'buildPlaceholderSurfaceData_', this).call(this, type, extra);
 				if (type === Component.SurfaceType.NORMAL) {
-					data.templateName = extra;
+					var split = extra.split('.');
+					data.templateComponentName = split[0];
+					data.templateName = split[1];
 				}
 				return data;
 			}
@@ -5239,29 +5486,17 @@ this.steelNamed = {};
 
 			/**
     * Generates the id for a surface that was found by a soy template call.
+    * @param {string} templateComponentName
     * @param {string} templateName
     * @return {string}
     */
-			value: function generateSoySurfaceId_(templateName) {
-				if (!this.surfaceBeingRendered_ && !this.firstSurfaceFound_[templateName]) {
+			value: function generateSoySurfaceId_(templateComponentName, templateName) {
+				if (!this.surfaceBeingRendered_ && !this.firstSurfaceFound_[templateName] && templateComponentName === this.constructor.NAME) {
 					this.firstSurfaceFound_[templateName] = true;
 					return templateName;
 				} else {
 					return this.generateSurfaceId_(Component.SurfaceType.NORMAL, this.surfaceBeingRendered_);
 				}
-			}
-		}, {
-			key: 'getComponentHtml',
-
-			/**
-    * Overrides Component's original behavior so the component's html may be rendered
-    * by its template.
-    * @param {string} content
-    * @return {string}
-    * @override
-    */
-			value: function getComponentHtml(content) {
-				return this.renderElementDelTemplate_(content);
 			}
 		}, {
 			key: 'getElementContent',
@@ -5274,20 +5509,7 @@ this.steelNamed = {};
     */
 			value: function getElementContent() {
 				this.surfaceBeingRendered_ = null;
-				return this.renderTemplateByName_('content');
-			}
-		}, {
-			key: 'getNonComponentSurfaceHtml',
-
-			/**
-    * Overrides Component's original behavior so surface's html may be rendered by
-    * their templates.
-    * @param {string} surfaceId
-    * @param {string} content
-    * @return {string}
-    */
-			value: function getNonComponentSurfaceHtml(surfaceId, content) {
-				return this.renderElementDelTemplate_(content, surfaceId);
+				return this.renderTemplateByName_(this.constructor.NAME, 'content');
 			}
 		}, {
 			key: 'getSurfaceContent',
@@ -5304,46 +5526,10 @@ this.steelNamed = {};
 				var data = this.nextSurfaceCallData_[surfaceId];
 				this.nextSurfaceCallData_[surfaceId] = null;
 				this.surfaceBeingRendered_ = surfaceId;
-				return this.renderTemplateByName_(surface.templateName, data);
+				return this.renderTemplateByName_(surface.templateComponentName, surface.templateName, data);
 			}
 		}, {
-			key: 'handleGetDelegateFnCall_',
-
-			/**
-    * Handles a call to the soy function for getting delegate functions.
-    * @param {string} delTemplateId
-    * @return {!function}
-    * @protected
-    */
-			value: function handleGetDelegateFnCall_(delTemplateId) {
-				var index = delTemplateId.indexOf('.');
-				if (index === -1) {
-					return this.handleTemplateCall_.bind(this, delTemplateId);
-				} else {
-					return this.handleSurfaceCall_.bind(this, delTemplateId.substr(index + 1));
-				}
-			}
-		}, {
-			key: 'handleSurfaceCall_',
-
-			/**
-    * Handles a call to the SoyComponent surface template.
-    * @param {string} surfaceName The surface's name.
-    * @param {!Object} data The data the template was called with.
-    * @return {string} A placeholder to be rendered instead of the content the template
-    *   function would have returned.
-    * @protected
-    */
-			value: function handleSurfaceCall_(surfaceName, data) {
-				var surfaceId = data.surfaceId;
-				if (!core.isDefAndNotNull(surfaceId)) {
-					surfaceId = this.generateSoySurfaceId_(surfaceName);
-				}
-				this.nextSurfaceCallData_[surfaceId] = data;
-				return '%%%%~s-' + surfaceId + ':' + surfaceName + '~%%%%';
-			}
-		}, {
-			key: 'handleTemplateCall_',
+			key: 'handleComponentCall_',
 
 			/**
     * Handles a call to the SoyComponent component template.
@@ -5353,33 +5539,61 @@ this.steelNamed = {};
     *   function would have returned.
     * @protected
     */
-			value: function handleTemplateCall_(componentName, data) {
+			value: function handleComponentCall_(componentName, data) {
 				var id = (data || {}).id || this.generateSurfaceId_(Component.SurfaceType.COMPONENT, this.surfaceBeingRendered_);
 				Component.componentsCollector.setNextComponentData(id, this.buildComponentConfigData_(id, data));
 				return '%%%%~c-' + id + ':' + componentName + '~%%%%';
 			}
 		}, {
-			key: 'renderElementDelTemplate_',
+			key: 'handleInterceptedCall_',
 
 			/**
-    * Renders the element deltemplate for this component or for one of its surfaces.
-    * @param {?string} content
-    * @param {string=} opt_surfaceId
+    * Handles a call to the soy function for getting delegate functions.
+    * @param {string} templateComponentName The name of the component that this template was belongs to.
+    * @param {string} templateName The name of this template.
+    * @param {!Object} data The data the template was called with.
     * @return {string}
+    * @protected
     */
-			value: function renderElementDelTemplate_(content, opt_surfaceId) {
-				var templateName = this.constructor.NAME;
-				if (opt_surfaceId) {
-					templateName += '.' + this.getSurface(opt_surfaceId).templateName;
+			value: function handleInterceptedCall_(templateComponentName, templateName, data) {
+				if (templateName === 'content') {
+					return this.handleComponentCall_.call(this, templateComponentName, data);
+				} else {
+					return this.handleSurfaceCall_.call(this, templateComponentName, templateName, data);
 				}
-				var templateFn = soy.$$getDelegateFn(templateName, 'element', true);
-				var data = {
-					elementClasses: this.elementClasses,
-					elementContent: SoyComponent.sanitizeHtml(content || ''),
-					id: this.id || this.makeId_(),
-					surfaceId: opt_surfaceId
-				};
-				return templateFn(data, null, {}).content;
+			}
+		}, {
+			key: 'handleSurfaceCall_',
+
+			/**
+    * Handles a call to the SoyComponent surface template.
+    * @param {string} templateComponentName The name of the component that this template was belongs to.
+    * @param {string} templateName The name of this template.
+    * @param {!Object} data The data the template was called with.
+    * @return {string} A placeholder to be rendered instead of the content the template
+    *   function would have returned.
+    * @protected
+    */
+			value: function handleSurfaceCall_(templateComponentName, templateName, data) {
+				var surfaceId = data.surfaceId;
+				if (!core.isDefAndNotNull(surfaceId)) {
+					surfaceId = this.generateSoySurfaceId_(templateComponentName, templateName);
+				}
+				this.nextSurfaceCallData_[surfaceId] = data;
+				return '%%%%~s-' + surfaceId + ':' + templateComponentName + '.' + templateName + '~%%%%';
+			}
+		}, {
+			key: 'isSurfaceTemplate_',
+
+			/**
+    * Checks if a template is a surface template.
+    * @param {string} templateName
+    * @param {!function()} templateFn
+    * @return {boolean}
+    * @protected
+    */
+			value: function isSurfaceTemplate_(templateName, templateFn) {
+				return templateName !== 'content' && templateName.substr(0, 13) !== '__deltemplate' && templateFn.params;
 			}
 		}, {
 			key: 'renderTemplate_',
@@ -5391,9 +5605,10 @@ this.steelNamed = {};
     * @return {string} The template's result content.
     */
 			value: function renderTemplate_(templateFn, opt_data) {
-				soy.$$getDelegateFn = this.handleGetDelegateFnCall_.bind(this);
-				var content = templateFn(opt_data || this.buildTemplateData_(), null, {}).content;
-				soy.$$getDelegateFn = originalGetDelegateFn;
+				SoyComponentAop.startInterception(this.handleInterceptedCall_.bind(this));
+				templateFn = SoyComponentAop.getOriginalFn(templateFn);
+				var content = templateFn(opt_data || this.buildTemplateData_(), null, ijData).content;
+				SoyComponentAop.stopInterception();
 				return content;
 			}
 		}, {
@@ -5401,37 +5616,21 @@ this.steelNamed = {};
 
 			/**
     * Renders the template with the specified name.
+    * @param {string} templateComponentName
     * @param {string} templateName
     * @param {Object=} opt_data
     * @return {string} The template's result content.
     */
-			value: function renderTemplateByName_(templateName, opt_data) {
-				var elementTemplate = this.constructor.TEMPLATES_MERGED[templateName];
+			value: function renderTemplateByName_(templateComponentName, templateName, opt_data) {
+				var elementTemplate;
+				var componentTemplates = ComponentRegistry.Templates[templateComponentName];
+				if (componentTemplates) {
+					elementTemplate = componentTemplates[templateName];
+				}
+
 				if (core.isFunction(elementTemplate)) {
 					return this.renderTemplate_(elementTemplate, opt_data);
 				}
-			}
-		}, {
-			key: 'valueElementFn_',
-
-			/**
-    * Provides the default value for element attribute.
-    * @return {Element} The element.
-    * @protected
-    */
-			value: function valueElementFn_() {
-				var rendered = this.getComponentHtml();
-				if (rendered) {
-					var frag = dom.buildFragment(rendered);
-					var element = frag.childNodes[0];
-					// Remove element from fragment, so it won't have a parent. Otherwise,
-					// the `attach` method will think that the element has already been
-					// attached.
-					frag.removeChild(element);
-					return element;
-				}
-
-				return babelHelpers.get(Object.getPrototypeOf(SoyComponent.prototype), 'valueElementFn_', this).call(this);
 			}
 		}], [{
 			key: 'createComponentFromTemplate',
@@ -5448,21 +5647,26 @@ this.steelNamed = {};
     * @static
     */
 			value: function createComponentFromTemplate(templateFn, opt_element, opt_data) {
+				var name = 'TemplateComponent' + core.getUid();
+
 				var TemplateComponent = (function (_SoyComponent) {
+					babelHelpers.inherits(TemplateComponent, _SoyComponent);
+
 					function TemplateComponent() {
 						babelHelpers.classCallCheck(this, TemplateComponent);
 						babelHelpers.get(Object.getPrototypeOf(TemplateComponent.prototype), 'constructor', this).apply(this, arguments);
 					}
 
-					babelHelpers.inherits(TemplateComponent, _SoyComponent);
 					return TemplateComponent;
 				})(SoyComponent);
 
-				TemplateComponent.TEMPLATES = {
+				ComponentRegistry.register(name, TemplateComponent);
+				ComponentRegistry.Templates[name] = {
 					content: function content(opt_attrs, opt_ignored, opt_ijData) {
-						return templateFn(opt_data || {}, opt_ignored, opt_ijData);
+						return SoyComponentAop.getOriginalFn(templateFn)(opt_data || {}, opt_ignored, opt_ijData);
 					}
 				};
+				SoyComponentAop.registerTemplates(name);
 				return new TemplateComponent({
 					element: opt_element
 				});
@@ -5508,24 +5712,25 @@ this.steelNamed = {};
     * soy template.
     * @param {string} html
     * @return {soydata.SanitizedHtml}
-    * @protected
+    * @static
     */
 			value: function sanitizeHtml(html) {
 				return soydata.VERY_UNSAFE.ordainSanitizedHtml(html);
 			}
+		}, {
+			key: 'setInjectedData',
+
+			/**
+    * Sets the injected data object that should be passed to templates.
+    * @param {Object} data
+    * @static
+    */
+			value: function setInjectedData(data) {
+				ijData = data || {};
+			}
 		}]);
 		return SoyComponent;
 	})(Component);
-
-	/**
-  * The soy templates for this component. Templates that have the same
-  * name of a registered surface will be used for automatically rendering
-  * it.
-  * @type {Object<string, !function(Object):Object>}
-  * @protected
-  * @static
-  */
-	SoyComponent.TEMPLATES = {};
 
 	this.steel.SoyComponent = SoyComponent;
 }).call(this);
@@ -5690,12 +5895,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.Alert.
-   * @hassoydeltemplate {Alert}
-   * @hassoydeltemplate {Alert.body}
-   * @hassoydeltemplate {Alert.dismiss}
-   * @hassoydelcall {Alert}
-   * @hassoydelcall {Alert.body}
-   * @hassoydelcall {Alert.dismiss}
    */
 
   if (typeof Templates.Alert == 'undefined') {
@@ -5710,7 +5909,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Alert.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Alert.dismiss'), '', true)(opt_data, null, opt_ijData) + soy.$$getDelegateFn(soy.$$getDelTemplateId('Alert.body'), '', true)(opt_data, null, opt_ijData));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="alert alert-dismissible component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '" role="alert">' + Templates.Alert.dismiss(opt_data, null, opt_ijData) + Templates.Alert.body(opt_data, null, opt_ijData) + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Alert.content.soyTemplateName = 'Templates.Alert.content';
@@ -5724,7 +5923,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Alert.body = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.body ? soy.$$escapeHtml(opt_data.body) : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body">' + (opt_data.body ? soy.$$escapeHtml(opt_data.body) : '') + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Alert.body.soyTemplateName = 'Templates.Alert.body';
@@ -5738,112 +5937,15 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Alert.dismiss = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.dismissible ? '<button type="button" class="close" aria-label="Close" data-onclick="toggle"><span aria-hidden="true">×</span></button>' : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-dismiss">' + (opt_data.dismissible ? '<button type="button" class="close" aria-label="Close" data-onclick="toggle"><span aria-hidden="true">×</span></button>' : '') + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Alert.dismiss.soyTemplateName = 'Templates.Alert.dismiss';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Alert.__deltemplate_s13_c3d627de = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="alert alert-dismissible component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? opt_data.elementClasses : '') + '" role="alert">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.Alert.__deltemplate_s13_c3d627de.soyTemplateName = 'Templates.Alert.__deltemplate_s13_c3d627de';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Alert'), 'element', 0, Templates.Alert.__deltemplate_s13_c3d627de);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Alert.__deltemplate_s21_cd80c96e = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Alert'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Alert.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Alert.__deltemplate_s21_cd80c96e.soyTemplateName = 'Templates.Alert.__deltemplate_s21_cd80c96e';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Alert'), '', 0, Templates.Alert.__deltemplate_s21_cd80c96e);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Alert.__deltemplate_s27_cbcfd186 = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var elementId__soy28 = (opt_data.id ? opt_data.id : '') + '-' + (opt_data.surfaceId != null ? opt_data.surfaceId : 'body');
-    output += '<div id="' + soy.$$escapeHtmlAttribute(elementId__soy28) + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>';
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
-  };
-  if (goog.DEBUG) {
-    Templates.Alert.__deltemplate_s27_cbcfd186.soyTemplateName = 'Templates.Alert.__deltemplate_s27_cbcfd186';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Alert.body'), 'element', 0, Templates.Alert.__deltemplate_s27_cbcfd186);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Alert.__deltemplate_s34_9a197608 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Alert.body'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Alert.body(opt_data, null, opt_ijData)), id: opt_data.id, surfaceId: opt_data.surfaceId }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Alert.__deltemplate_s34_9a197608.soyTemplateName = 'Templates.Alert.__deltemplate_s34_9a197608';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Alert.body'), '', 0, Templates.Alert.__deltemplate_s34_9a197608);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Alert.__deltemplate_s40_fbeb8299 = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var elementId__soy41 = (opt_data.id ? opt_data.id : '') + '-' + (opt_data.surfaceId != null ? opt_data.surfaceId : 'dismiss');
-    output += '<div id="' + soy.$$escapeHtmlAttribute(elementId__soy41) + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>';
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
-  };
-  if (goog.DEBUG) {
-    Templates.Alert.__deltemplate_s40_fbeb8299.soyTemplateName = 'Templates.Alert.__deltemplate_s40_fbeb8299';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Alert.dismiss'), 'element', 0, Templates.Alert.__deltemplate_s40_fbeb8299);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Alert.__deltemplate_s47_d8c68a2a = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Alert.dismiss'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Alert.dismiss(opt_data, null, opt_ijData)), id: opt_data.id, surfaceId: opt_data.surfaceId }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Alert.__deltemplate_s47_d8c68a2a.soyTemplateName = 'Templates.Alert.__deltemplate_s47_d8c68a2a';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Alert.dismiss'), '', 0, Templates.Alert.__deltemplate_s47_d8c68a2a);
-
-  Templates.Alert.body.params = ['body'];
-  Templates.Alert.dismiss.params = ['dismissible'];
+  Templates.Alert.content.params = ['id', 'elementClasses'];
+  Templates.Alert.body.params = ['body', 'id'];
+  Templates.Alert.dismiss.params = ['dismissible', 'id'];
   this.steel.Alert = {};
 
   /* jshint ignore:end */
@@ -5863,13 +5965,14 @@ this.steelNamed = {};
   */
 
 	var Alert = (function (_SoyComponent) {
+		babelHelpers.inherits(Alert, _SoyComponent);
+
 		function Alert(opt_config) {
 			babelHelpers.classCallCheck(this, Alert);
 
 			babelHelpers.get(Object.getPrototypeOf(Alert.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(Alert, _SoyComponent);
 		babelHelpers.createClass(Alert, [{
 			key: 'close',
 			value: function close() {
@@ -7052,7 +7155,9 @@ this.steelNamed = {};
    * @final
    */
   CancellablePromise.CancellationError = (function (_Error) {
-    var _class = function _class(opt_message) {
+    babelHelpers.inherits(_class, _Error);
+
+    function _class(opt_message) {
       babelHelpers.classCallCheck(this, _class);
 
       babelHelpers.get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, opt_message);
@@ -7060,9 +7165,8 @@ this.steelNamed = {};
       if (opt_message) {
         this.message = opt_message;
       }
-    };
+    }
 
-    babelHelpers.inherits(_class, _Error);
     return _class;
   })(Error);
 
@@ -7096,6 +7200,8 @@ this.steelNamed = {};
   */
 
 	var AutocompleteBase = (function (_SoyComponent) {
+		babelHelpers.inherits(AutocompleteBase, _SoyComponent);
+
 		/**
    * @inheritDoc
    */
@@ -7109,7 +7215,6 @@ this.steelNamed = {};
 			this.on('select', this.select);
 		}
 
-		babelHelpers.inherits(AutocompleteBase, _SoyComponent);
 		babelHelpers.createClass(AutocompleteBase, [{
 			key: 'attached',
 
@@ -7239,6 +7344,15 @@ this.steelNamed = {};
 				this.inputElement.focus();
 			},
 			validator: core.isFunction
+		},
+
+		/**
+   * Indicates if the component is visible or not.
+   * @type {boolean}
+   */
+		visible: {
+			validator: core.isBoolean,
+			value: false
 		}
 	};
 
@@ -7767,10 +7881,7 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.List.
-   * @hassoydeltemplate {List}
    * @hassoydeltemplate {List.items}
-   * @hassoydelcall {List}
-   * @hassoydelcall {List.items}
    */
 
   if (typeof Templates.List == 'undefined') {
@@ -7785,7 +7896,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.List.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('List.items'), '', true)(opt_data, null, opt_ijData));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="list component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '">' + Templates.List.items(opt_data, null, opt_ijData) + '</div>');
   };
   if (goog.DEBUG) {
     Templates.List.content.soyTemplateName = 'Templates.List.content';
@@ -7799,24 +7910,25 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.List.items = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var itemList5 = opt_data.items;
-    var itemListLen5 = itemList5.length;
-    for (var itemIndex5 = 0; itemIndex5 < itemListLen5; itemIndex5++) {
-      var itemData5 = itemList5[itemIndex5];
-      output += '<li class="list-item clearfix" data-index="' + soy.$$escapeHtmlAttribute(itemIndex5) + '" data-onclick="handleClick">';
-      if (itemData5.icons) {
+    var output = '<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items">';
+    var itemList14 = opt_data.items;
+    var itemListLen14 = itemList14.length;
+    for (var itemIndex14 = 0; itemIndex14 < itemListLen14; itemIndex14++) {
+      var itemData14 = itemList14[itemIndex14];
+      output += '<li class="list-item clearfix" data-index="' + soy.$$escapeHtmlAttribute(itemIndex14) + '" data-onclick="handleClick">';
+      if (itemData14.icons) {
         output += '<div class="list-icons pull-right">';
-        var iconList12 = itemData5.icons;
-        var iconListLen12 = iconList12.length;
-        for (var iconIndex12 = 0; iconIndex12 < iconListLen12; iconIndex12++) {
-          var iconData12 = iconList12[iconIndex12];
-          output += '<span class="list-icon ' + soy.$$escapeHtmlAttribute(iconData12) + '"></span>';
+        var iconList21 = itemData14.icons;
+        var iconListLen21 = iconList21.length;
+        for (var iconIndex21 = 0; iconIndex21 < iconListLen21; iconIndex21++) {
+          var iconData21 = iconList21[iconIndex21];
+          output += '<span class="list-icon ' + soy.$$escapeHtmlAttribute(iconData21) + '"></span>';
         }
         output += '</div>';
       }
-      output += (itemData5.avatar ? '<span class="list-image pull-left ' + soy.$$escapeHtmlAttribute(itemData5.avatar['class']) + '">' + soy.$$escapeHtml(itemData5.avatar.content) + '</span>' : '') + '<div class="list-main-content pull-left"><div class="list-text-primary">' + soy.$$escapeHtml(itemData5.textPrimary) + '</div>' + (itemData5.textSecondary ? '<div class="list-text-secondary">' + soy.$$escapeHtml(itemData5.textSecondary) + '</div>' : '') + '</div></li>';
+      output += (itemData14.avatar ? '<span class="list-image pull-left ' + soy.$$escapeHtmlAttribute(itemData14.avatar['class']) + '">' + soy.$$escapeHtml(itemData14.avatar.content) + '</span>' : '') + '<div class="list-main-content pull-left"><div class="list-text-primary">' + soy.$$escapeHtml(itemData14.textPrimary) + '</div>' + (itemData14.textSecondary ? '<div class="list-text-secondary">' + soy.$$escapeHtml(itemData14.textSecondary) + '</div>' : '') + '</div></li>';
     }
+    output += '</ul>';
     return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
   };
   if (goog.DEBUG) {
@@ -7830,62 +7942,16 @@ this.steelNamed = {};
    * @return {!soydata.SanitizedHtml}
    * @suppress {checkTypes}
    */
-  Templates.List.__deltemplate_s35_e3f298e9 = function (opt_data, opt_ignored, opt_ijData) {
+  Templates.List.__deltemplate_s45_e3f298e9 = function (opt_data, opt_ignored, opt_ijData) {
     return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
   };
   if (goog.DEBUG) {
-    Templates.List.__deltemplate_s35_e3f298e9.soyTemplateName = 'Templates.List.__deltemplate_s35_e3f298e9';
+    Templates.List.__deltemplate_s45_e3f298e9.soyTemplateName = 'Templates.List.__deltemplate_s45_e3f298e9';
   }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('List.items'), 'element', 0, Templates.List.__deltemplate_s35_e3f298e9);
+  soy.$$registerDelegateFn(soy.$$getDelTemplateId('List.items'), 'element', 0, Templates.List.__deltemplate_s45_e3f298e9);
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.List.__deltemplate_s41_88d36183 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('List'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.List.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.List.__deltemplate_s41_88d36183.soyTemplateName = 'Templates.List.__deltemplate_s41_88d36183';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('List'), '', 0, Templates.List.__deltemplate_s41_88d36183);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.List.__deltemplate_s47_4ac84340 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="list component' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? ' ' + opt_data.elementClasses : '') + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.List.__deltemplate_s47_4ac84340.soyTemplateName = 'Templates.List.__deltemplate_s47_4ac84340';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('List'), 'element', 0, Templates.List.__deltemplate_s47_4ac84340);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.List.__deltemplate_s55_605e1843 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('List.items'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.List.items(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.List.__deltemplate_s55_605e1843.soyTemplateName = 'Templates.List.__deltemplate_s55_605e1843';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('List.items'), '', 0, Templates.List.__deltemplate_s55_605e1843);
-
-  Templates.List.items.params = ['items'];
+  Templates.List.content.params = ['elementClasses', 'id'];
+  Templates.List.items.params = ['id', 'items'];
   this.steel.List = {};
 
   /* jshint ignore:end */
@@ -7902,13 +7968,14 @@ this.steelNamed = {};
   */
 
 	var List = (function (_SoyComponent) {
+		babelHelpers.inherits(List, _SoyComponent);
+
 		function List(opt_config) {
 			babelHelpers.classCallCheck(this, List);
 
 			babelHelpers.get(Object.getPrototypeOf(List.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(List, _SoyComponent);
 		babelHelpers.createClass(List, [{
 			key: 'handleClick',
 
@@ -7978,6 +8045,8 @@ this.steelNamed = {};
   */
 
 	var Autocomplete = (function (_AutocompleteBase) {
+		babelHelpers.inherits(Autocomplete, _AutocompleteBase);
+
 		/**
    * @inheritDoc
    */
@@ -7988,7 +8057,6 @@ this.steelNamed = {};
 			babelHelpers.get(Object.getPrototypeOf(Autocomplete.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(Autocomplete, _AutocompleteBase);
 		babelHelpers.createClass(Autocomplete, [{
 			key: 'attached',
 
@@ -8170,12 +8238,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.Dropdown.
-   * @hassoydeltemplate {Dropdown}
-   * @hassoydeltemplate {Dropdown.body}
-   * @hassoydeltemplate {Dropdown.header}
-   * @hassoydelcall {Dropdown}
-   * @hassoydelcall {Dropdown.body}
-   * @hassoydelcall {Dropdown.header}
    */
 
   if (typeof Templates.Dropdown == 'undefined') {
@@ -8190,7 +8252,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Dropdown.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Dropdown.header'), '', true)(opt_data, null, opt_ijData) + soy.$$getDelegateFn(soy.$$getDelTemplateId('Dropdown.body'), '', true)(opt_data, null, opt_ijData));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="dropdown component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '">' + Templates.Dropdown.header(opt_data, null, opt_ijData) + Templates.Dropdown.body(opt_data, null, opt_ijData) + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Dropdown.content.soyTemplateName = 'Templates.Dropdown.content';
@@ -8204,7 +8266,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Dropdown.header = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.header ? soy.$$escapeHtml(opt_data.header) : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '">' + (opt_data.header ? soy.$$escapeHtml(opt_data.header) : '') + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Dropdown.header.soyTemplateName = 'Templates.Dropdown.header';
@@ -8218,109 +8280,15 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Dropdown.body = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.body ? soy.$$escapeHtml(opt_data.body) : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="dropdown-menu">' + (opt_data.body ? soy.$$escapeHtml(opt_data.body) : '') + '</ul>');
   };
   if (goog.DEBUG) {
     Templates.Dropdown.body.soyTemplateName = 'Templates.Dropdown.body';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Dropdown.__deltemplate_s13_1849d840 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="dropdown-menu">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
-  };
-  if (goog.DEBUG) {
-    Templates.Dropdown.__deltemplate_s13_1849d840.soyTemplateName = 'Templates.Dropdown.__deltemplate_s13_1849d840';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Dropdown.body'), 'element', 0, Templates.Dropdown.__deltemplate_s13_1849d840);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Dropdown.__deltemplate_s19_0db44a13 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Dropdown'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Dropdown.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Dropdown.__deltemplate_s19_0db44a13.soyTemplateName = 'Templates.Dropdown.__deltemplate_s19_0db44a13';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Dropdown'), '', 0, Templates.Dropdown.__deltemplate_s19_0db44a13);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Dropdown.__deltemplate_s25_8cb12604 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="dropdown component' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? ' ' + opt_data.elementClasses : '') + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.Dropdown.__deltemplate_s25_8cb12604.soyTemplateName = 'Templates.Dropdown.__deltemplate_s25_8cb12604';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Dropdown'), 'element', 0, Templates.Dropdown.__deltemplate_s25_8cb12604);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Dropdown.__deltemplate_s33_62341603 = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var elementId__soy34 = opt_data.id + '-' + (opt_data.surfaceId != null ? opt_data.surfaceId : 'header');
-    output += '<div id="' + soy.$$escapeHtmlAttribute(elementId__soy34) + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>';
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
-  };
-  if (goog.DEBUG) {
-    Templates.Dropdown.__deltemplate_s33_62341603.soyTemplateName = 'Templates.Dropdown.__deltemplate_s33_62341603';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Dropdown.header'), 'element', 0, Templates.Dropdown.__deltemplate_s33_62341603);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Dropdown.__deltemplate_s40_9db90e38 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Dropdown.header'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Dropdown.header(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Dropdown.__deltemplate_s40_9db90e38.soyTemplateName = 'Templates.Dropdown.__deltemplate_s40_9db90e38';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Dropdown.header'), '', 0, Templates.Dropdown.__deltemplate_s40_9db90e38);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Dropdown.__deltemplate_s45_8a7848e7 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Dropdown.body'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Dropdown.body(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Dropdown.__deltemplate_s45_8a7848e7.soyTemplateName = 'Templates.Dropdown.__deltemplate_s45_8a7848e7';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Dropdown.body'), '', 0, Templates.Dropdown.__deltemplate_s45_8a7848e7);
-
-  Templates.Dropdown.header.params = ['header'];
-  Templates.Dropdown.body.params = ['body'];
+  Templates.Dropdown.content.params = ['elementClasses', 'id'];
+  Templates.Dropdown.header.params = ['header', 'id'];
+  Templates.Dropdown.body.params = ['body', 'id'];
   this.steel.Dropdown = {};
 
   /* jshint ignore:end */
@@ -8335,6 +8303,8 @@ this.steelNamed = {};
 	var SoyComponent = this.steel.SoyComponent;
 
 	var Dropdown = (function (_SoyComponent) {
+		babelHelpers.inherits(Dropdown, _SoyComponent);
+
 		function Dropdown(opt_config) {
 			babelHelpers.classCallCheck(this, Dropdown);
 
@@ -8342,7 +8312,6 @@ this.steelNamed = {};
 			this.eventHandler_ = new EventHandler();
 		}
 
-		babelHelpers.inherits(Dropdown, _SoyComponent);
 		babelHelpers.createClass(Dropdown, [{
 			key: 'attached',
 			value: function attached() {
@@ -8446,14 +8415,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.Modal.
-   * @hassoydeltemplate {Modal}
-   * @hassoydeltemplate {Modal.body}
-   * @hassoydeltemplate {Modal.footer}
-   * @hassoydeltemplate {Modal.header}
-   * @hassoydelcall {Modal}
-   * @hassoydelcall {Modal.body}
-   * @hassoydelcall {Modal.footer}
-   * @hassoydelcall {Modal.header}
    */
 
   if (typeof Templates.Modal == 'undefined') {
@@ -8468,7 +8429,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Modal.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div class="modal-dialog"><div class="modal-content">' + soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal.header'), '', true)(opt_data, null, opt_ijData) + soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal.body'), '', true)(opt_data, null, opt_ijData) + soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal.footer'), '', true)(opt_data, null, opt_ijData) + '</div></div>');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="modal component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '"><div class="modal-dialog"><div class="modal-content">' + Templates.Modal.header(opt_data, null, opt_ijData) + Templates.Modal.body(opt_data, null, opt_ijData) + Templates.Modal.footer(opt_data, null, opt_ijData) + '</div></div></div>');
   };
   if (goog.DEBUG) {
     Templates.Modal.content.soyTemplateName = 'Templates.Modal.content';
@@ -8482,7 +8443,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Modal.body = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.body ? soy.$$escapeHtml(opt_data.body) : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<section id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="modal-body">' + (opt_data.body ? soy.$$escapeHtml(opt_data.body) : '') + '</section>');
   };
   if (goog.DEBUG) {
     Templates.Modal.body.soyTemplateName = 'Templates.Modal.body';
@@ -8496,7 +8457,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Modal.footer = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.footer ? soy.$$escapeHtml(opt_data.footer) : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<footer id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-footer" class="modal-footer">' + (opt_data.footer ? soy.$$escapeHtml(opt_data.footer) : '') + '</footer>');
   };
   if (goog.DEBUG) {
     Templates.Modal.footer.soyTemplateName = 'Templates.Modal.footer';
@@ -8510,137 +8471,16 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Modal.header = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.header ? '<button type="button" class="close" data-onclick="hide" aria-label="Close"><span aria-hidden="true">×</span></button>' + soy.$$escapeHtml(opt_data.header) : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<header id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-header" class="modal-header">' + (opt_data.header ? '<button type="button" class="close" data-onclick="hide" aria-label="Close"><span aria-hidden="true">×</span></button>' + soy.$$escapeHtml(opt_data.header) : '') + '</header>');
   };
   if (goog.DEBUG) {
     Templates.Modal.header.soyTemplateName = 'Templates.Modal.header';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s21_65c2d4d4 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<section id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-body" class="modal-body">' + soy.$$escapeHtml(opt_data.elementContent) + '</section>');
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s21_65c2d4d4.soyTemplateName = 'Templates.Modal.__deltemplate_s21_65c2d4d4';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal.body'), 'element', 0, Templates.Modal.__deltemplate_s21_65c2d4d4);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s27_c9897a65 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<footer id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-footer" class="modal-footer">' + soy.$$escapeHtml(opt_data.elementContent) + '</footer>');
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s27_c9897a65.soyTemplateName = 'Templates.Modal.__deltemplate_s27_c9897a65';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal.footer'), 'element', 0, Templates.Modal.__deltemplate_s27_c9897a65);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s33_499dc9aa = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<header id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-header" class="modal-header">' + soy.$$escapeHtml(opt_data.elementContent) + '</header>');
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s33_499dc9aa.soyTemplateName = 'Templates.Modal.__deltemplate_s33_499dc9aa';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal.header'), 'element', 0, Templates.Modal.__deltemplate_s33_499dc9aa);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s39_45b138fb = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Modal.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s39_45b138fb.soyTemplateName = 'Templates.Modal.__deltemplate_s39_45b138fb';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal'), '', 0, Templates.Modal.__deltemplate_s39_45b138fb);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s45_df8ef55a = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="modal component' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? ' ' + opt_data.elementClasses : '') + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s45_df8ef55a.soyTemplateName = 'Templates.Modal.__deltemplate_s45_df8ef55a';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal'), 'element', 0, Templates.Modal.__deltemplate_s45_df8ef55a);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s53_90747620 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal.body'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Modal.body(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s53_90747620.soyTemplateName = 'Templates.Modal.__deltemplate_s53_90747620';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal.body'), '', 0, Templates.Modal.__deltemplate_s53_90747620);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s58_231e36e7 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal.footer'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Modal.footer(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s58_231e36e7.soyTemplateName = 'Templates.Modal.__deltemplate_s58_231e36e7';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal.footer'), '', 0, Templates.Modal.__deltemplate_s58_231e36e7);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Modal.__deltemplate_s63_b8354b7d = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Modal.header'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Modal.header(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Modal.__deltemplate_s63_b8354b7d.soyTemplateName = 'Templates.Modal.__deltemplate_s63_b8354b7d';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Modal.header'), '', 0, Templates.Modal.__deltemplate_s63_b8354b7d);
-
-  Templates.Modal.body.params = ['body'];
-  Templates.Modal.footer.params = ['footer'];
-  Templates.Modal.header.params = ['header'];
+  Templates.Modal.content.params = ['id', 'elementClasses'];
+  Templates.Modal.body.params = ['id', 'body'];
+  Templates.Modal.footer.params = ['footer', 'id'];
+  Templates.Modal.header.params = ['header', 'id'];
   this.steel.Modal = {};
 
   /* jshint ignore:end */
@@ -8659,6 +8499,8 @@ this.steelNamed = {};
   */
 
 	var Modal = (function (_SoyComponent) {
+		babelHelpers.inherits(Modal, _SoyComponent);
+
 		/**
    * @inheritDoc
    */
@@ -8669,7 +8511,6 @@ this.steelNamed = {};
 			babelHelpers.get(Object.getPrototypeOf(Modal.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(Modal, _SoyComponent);
 		babelHelpers.createClass(Modal, [{
 			key: 'disposeInternal',
 
@@ -8800,8 +8641,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.Switcher.
-   * @hassoydeltemplate {Switcher}
-   * @hassoydelcall {Switcher}
    */
 
   if (typeof Templates.Switcher == 'undefined') {
@@ -8816,44 +8655,13 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Switcher.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div class="switcher-control"><div class="switcher-control-icon"></div></div>');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="switcher component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '"><div class="switcher-control"><div class="switcher-control-icon"></div></div></div>');
   };
   if (goog.DEBUG) {
     Templates.Switcher.content.soyTemplateName = 'Templates.Switcher.content';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Switcher.__deltemplate_s4_73a26937 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Switcher'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Switcher.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Switcher.__deltemplate_s4_73a26937.soyTemplateName = 'Templates.Switcher.__deltemplate_s4_73a26937';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Switcher'), '', 0, Templates.Switcher.__deltemplate_s4_73a26937);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Switcher.__deltemplate_s10_7e34f765 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="switcher component' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? ' ' + opt_data.elementClasses : '') + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.Switcher.__deltemplate_s10_7e34f765.soyTemplateName = 'Templates.Switcher.__deltemplate_s10_7e34f765';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Switcher'), 'element', 0, Templates.Switcher.__deltemplate_s10_7e34f765);
-
+  Templates.Switcher.content.params = ['elementClasses', 'id'];
   this.steel.Switcher = {};
 
   /* jshint ignore:end */
@@ -8872,13 +8680,14 @@ this.steelNamed = {};
   */
 
 	var Switcher = (function (_SoyComponent) {
+		babelHelpers.inherits(Switcher, _SoyComponent);
+
 		function Switcher(opt_config) {
 			babelHelpers.classCallCheck(this, Switcher);
 
 			babelHelpers.get(Object.getPrototypeOf(Switcher.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(Switcher, _SoyComponent);
 		babelHelpers.createClass(Switcher, [{
 			key: 'attached',
 
@@ -8946,10 +8755,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.Tooltip.
-   * @hassoydeltemplate {Tooltip}
-   * @hassoydeltemplate {Tooltip.inner}
-   * @hassoydelcall {Tooltip}
-   * @hassoydelcall {Tooltip.inner}
    */
 
   if (typeof Templates.Tooltip == 'undefined') {
@@ -8964,7 +8769,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Tooltip.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div class="tooltip-arrow"></div>' + soy.$$getDelegateFn(soy.$$getDelTemplateId('Tooltip.inner'), '', true)(opt_data, null, opt_ijData));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '"><div class="tooltip-arrow"></div>' + Templates.Tooltip.inner(opt_data, null, opt_ijData) + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Tooltip.content.soyTemplateName = 'Templates.Tooltip.content';
@@ -8978,76 +8783,14 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Tooltip.inner = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$escapeHtml(opt_data.content));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<section id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-inner" class="tooltip-inner">' + soy.$$escapeHtml(opt_data.content) + '</section>');
   };
   if (goog.DEBUG) {
     Templates.Tooltip.inner.soyTemplateName = 'Templates.Tooltip.inner';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Tooltip.__deltemplate_s7_5f2b5f73 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<section id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-inner" class="tooltip-inner">' + soy.$$escapeHtml(opt_data.elementContent) + '</section>');
-  };
-  if (goog.DEBUG) {
-    Templates.Tooltip.__deltemplate_s7_5f2b5f73.soyTemplateName = 'Templates.Tooltip.__deltemplate_s7_5f2b5f73';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Tooltip.inner'), 'element', 0, Templates.Tooltip.__deltemplate_s7_5f2b5f73);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Tooltip.__deltemplate_s13_8d49094e = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Tooltip'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Tooltip.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Tooltip.__deltemplate_s13_8d49094e.soyTemplateName = 'Templates.Tooltip.__deltemplate_s13_8d49094e';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Tooltip'), '', 0, Templates.Tooltip.__deltemplate_s13_8d49094e);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Tooltip.__deltemplate_s19_71828d2a = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip component' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? ' ' + opt_data.elementClasses : '') + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.Tooltip.__deltemplate_s19_71828d2a.soyTemplateName = 'Templates.Tooltip.__deltemplate_s19_71828d2a';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Tooltip'), 'element', 0, Templates.Tooltip.__deltemplate_s19_71828d2a);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Tooltip.__deltemplate_s27_992d380d = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Tooltip.inner'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Tooltip.inner(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Tooltip.__deltemplate_s27_992d380d.soyTemplateName = 'Templates.Tooltip.__deltemplate_s27_992d380d';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Tooltip.inner'), '', 0, Templates.Tooltip.__deltemplate_s27_992d380d);
-
-  Templates.Tooltip.content.params = ['content'];
-  Templates.Tooltip.inner.params = ['content'];
+  Templates.Tooltip.content.params = ['elementClasses', 'id'];
+  Templates.Tooltip.inner.params = ['content', 'id'];
   this.steel.Tooltip = {};
 
   /* jshint ignore:end */
@@ -9068,6 +8811,8 @@ this.steelNamed = {};
   */
 
 	var Tooltip = (function (_SoyComponent) {
+		babelHelpers.inherits(Tooltip, _SoyComponent);
+
 		/**
    * @inheritDoc
    */
@@ -9080,7 +8825,6 @@ this.steelNamed = {};
 			this.eventHandler_ = new EventHandler();
 		}
 
-		babelHelpers.inherits(Tooltip, _SoyComponent);
 		babelHelpers.createClass(Tooltip, [{
 			key: 'attached',
 
@@ -9393,10 +9137,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.TooltipMenu.
-   * @hassoydeltemplate {TooltipMenu}
-   * @hassoydeltemplate {TooltipMenu.items}
-   * @hassoydelcall {TooltipMenu}
-   * @hassoydelcall {TooltipMenu.items}
    */
 
   if (typeof Templates.TooltipMenu == 'undefined') {
@@ -9411,7 +9151,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.TooltipMenu.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', true)(opt_data, null, opt_ijData));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<nav id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip-menu component bottom ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '">' + Templates.TooltipMenu.items(opt_data, null, opt_ijData) + '</nav>');
   };
   if (goog.DEBUG) {
     Templates.TooltipMenu.content.soyTemplateName = 'Templates.TooltipMenu.content';
@@ -9425,82 +9165,22 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.TooltipMenu.items = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var itemList5 = opt_data.content;
-    var itemListLen5 = itemList5.length;
-    for (var itemIndex5 = 0; itemIndex5 < itemListLen5; itemIndex5++) {
-      var itemData5 = itemList5[itemIndex5];
-      output += '<li class="tooltip-menu-item"><a class="tooltip-menu-link" href="' + soy.$$escapeHtmlAttribute(soy.$$filterNormalizeUri(itemData5.href ? itemData5.href : '#')) + '">' + soy.$$escapeHtml(itemData5.content) + '</a></li>';
+    var output = '<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items" class="tooltip-menu-list">';
+    var itemList14 = opt_data.content;
+    var itemListLen14 = itemList14.length;
+    for (var itemIndex14 = 0; itemIndex14 < itemListLen14; itemIndex14++) {
+      var itemData14 = itemList14[itemIndex14];
+      output += '<li class="tooltip-menu-item"><a class="tooltip-menu-link" href="' + soy.$$escapeHtmlAttribute(soy.$$filterNormalizeUri(itemData14.href ? itemData14.href : '#')) + '">' + soy.$$escapeHtml(itemData14.content) + '</a></li>';
     }
+    output += '</ul>';
     return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
   };
   if (goog.DEBUG) {
     Templates.TooltipMenu.items.soyTemplateName = 'Templates.TooltipMenu.items';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s12_cfc546d2 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<nav id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="tooltip-menu ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? opt_data.elementClasses : '') + ' bottom" data-component>' + soy.$$escapeHtml(opt_data.elementContent) + '</nav>');
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s12_cfc546d2.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s12_cfc546d2';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', 0, Templates.TooltipMenu.__deltemplate_s12_cfc546d2);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s20_c0ab3df3 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<ul id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-items" class="tooltip-menu-list">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>');
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s20_c0ab3df3.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s20_c0ab3df3';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', 0, Templates.TooltipMenu.__deltemplate_s20_c0ab3df3);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s26_8f8c631d = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s26_8f8c631d.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s26_8f8c631d';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu'), '', 0, Templates.TooltipMenu.__deltemplate_s26_8f8c631d);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.TooltipMenu.__deltemplate_s32_8278e063 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.TooltipMenu.items(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.TooltipMenu.__deltemplate_s32_8278e063.soyTemplateName = 'Templates.TooltipMenu.__deltemplate_s32_8278e063';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('TooltipMenu.items'), '', 0, Templates.TooltipMenu.__deltemplate_s32_8278e063);
-
-  Templates.TooltipMenu.items.params = ['content'];
+  Templates.TooltipMenu.content.params = ['elementClasses', 'id'];
+  Templates.TooltipMenu.items.params = ['content', 'id'];
   this.steel.TooltipMenu = {};
 
   /* jshint ignore:end */
@@ -9518,6 +9198,8 @@ this.steelNamed = {};
   */
 
 	var TooltipMenu = (function (_Tooltip) {
+		babelHelpers.inherits(TooltipMenu, _Tooltip);
+
 		/**
    * @inheritDoc
    */
@@ -9528,7 +9210,6 @@ this.steelNamed = {};
 			babelHelpers.get(Object.getPrototypeOf(TooltipMenu.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(TooltipMenu, _Tooltip);
 		babelHelpers.createClass(TooltipMenu, [{
 			key: 'attached',
 			value: function attached() {
@@ -9566,6 +9247,13 @@ this.steelNamed = {};
   * @static
   */
 	TooltipMenu.ELEMENT_CLASSES_MERGED = 'tooltip-menu component';
+
+	/**
+  * The tag name of the main element.
+  * @type {string}
+  * @static
+  */
+	TooltipMenu.ELEMENT_TAG_NAME = 'nav';
 
 	/**
   * TooltipMenu attrbutes definition.
@@ -9622,12 +9310,6 @@ this.steelNamed = {};
 
   /**
    * @fileoverview Templates in namespace Templates.Treeview.
-   * @hassoydeltemplate {Treeview}
-   * @hassoydeltemplate {Treeview.node}
-   * @hassoydeltemplate {Treeview.nodes}
-   * @hassoydelcall {Treeview}
-   * @hassoydelcall {Treeview.node}
-   * @hassoydelcall {Treeview.nodes}
    */
 
   if (typeof Templates.Treeview == 'undefined') {
@@ -9642,7 +9324,7 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Treeview.content = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Treeview.nodes'), '', true)(opt_data, null, opt_ijData));
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="treeview component ' + soy.$$escapeHtmlAttribute(opt_data.elementClasses) + '">' + Templates.Treeview.nodes(opt_data, null, opt_ijData) + '</div>');
   };
   if (goog.DEBUG) {
     Templates.Treeview.content.soyTemplateName = 'Templates.Treeview.content';
@@ -9657,13 +9339,16 @@ this.steelNamed = {};
    */
   Templates.Treeview.nodes = function (opt_data, opt_ignored, opt_ijData) {
     var output = '';
-    var nodeList5 = opt_data.nodes;
-    var nodeListLen5 = nodeList5.length;
-    for (var nodeIndex5 = 0; nodeIndex5 < nodeListLen5; nodeIndex5++) {
-      var nodeData5 = nodeList5[nodeIndex5];
-      var index__soy6 = nodeIndex5;
-      output += soy.$$getDelegateFn(soy.$$getDelTemplateId('Treeview.node'), '', true)({ id: opt_data.id, node: nodeData5, surfaceId: opt_data.parentSurfaceId != null ? opt_data.parentSurfaceId + '-' + index__soy6 : index__soy6 }, null, opt_ijData);
+    var elementId__soy11 = opt_data.id + '-' + (opt_data.surfaceId != null ? opt_data.surfaceId : 'nodes');
+    output += '<ul id="' + soy.$$escapeHtmlAttribute(elementId__soy11) + '" class="treeview-nodes">';
+    var nodeList15 = opt_data.nodes;
+    var nodeListLen15 = nodeList15.length;
+    for (var nodeIndex15 = 0; nodeIndex15 < nodeListLen15; nodeIndex15++) {
+      var nodeData15 = nodeList15[nodeIndex15];
+      var index__soy16 = nodeIndex15;
+      output += Templates.Treeview.node({ id: opt_data.id, node: nodeData15, surfaceId: opt_data.parentSurfaceId != null ? opt_data.parentSurfaceId + '-' + index__soy16 : index__soy16 }, null, opt_ijData);
     }
+    output += '</ul>';
     return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
   };
   if (goog.DEBUG) {
@@ -9678,109 +9363,14 @@ this.steelNamed = {};
    * @suppress {checkTypes}
    */
   Templates.Treeview.node = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(opt_data.node ? '<div class="treeview-node-wrapper' + soy.$$escapeHtmlAttribute(opt_data.node.expanded ? ' expanded' : '') + '"><div class="treeview-node-main clearfix' + soy.$$escapeHtmlAttribute(opt_data.node.children ? ' hasChildren' : '') + '" data-onclick="handleNodeClicked_">' + (opt_data.node.children ? '<div class="treeview-node-toggler"></div>' : '') + '<span class="treeview-node-name">' + soy.$$escapeHtml(opt_data.node.name) + '</span></div>' + (opt_data.node.children ? soy.$$getDelegateFn(soy.$$getDelTemplateId('Treeview.nodes'), '', true)({ id: opt_data.id, nodes: opt_data.node.children, parentSurfaceId: opt_data.surfaceId, surfaceId: opt_data.surfaceId + '-nodes' }, null, opt_ijData) : '') + '</div>' : '');
+    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<li id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-' + soy.$$escapeHtmlAttribute(opt_data.surfaceId) + '" class="treeview-node">' + (opt_data.node ? '<div class="treeview-node-wrapper' + soy.$$escapeHtmlAttribute(opt_data.node.expanded ? ' expanded' : '') + '"><div class="treeview-node-main clearfix' + soy.$$escapeHtmlAttribute(opt_data.node.children ? ' hasChildren' : '') + '" data-onclick="handleNodeClicked_">' + (opt_data.node.children ? '<div class="treeview-node-toggler"></div>' : '') + '<span class="treeview-node-name">' + soy.$$escapeHtml(opt_data.node.name) + '</span></div>' + (opt_data.node.children ? Templates.Treeview.nodes({ id: opt_data.id, nodes: opt_data.node.children, parentSurfaceId: opt_data.surfaceId, surfaceId: opt_data.surfaceId + '-nodes' }, null, opt_ijData) : '') + '</div>' : '') + '</li>');
   };
   if (goog.DEBUG) {
     Templates.Treeview.node.soyTemplateName = 'Templates.Treeview.node';
   }
 
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Treeview.__deltemplate_s34_97f15e76 = function (opt_data, opt_ignored, opt_ijData) {
-    var output = '';
-    var elementId__soy35 = (opt_data.id ? opt_data.id : '') + '-' + (opt_data.surfaceId != null ? opt_data.surfaceId : 'nodes');
-    output += '<ul id="' + soy.$$escapeHtmlAttribute(elementId__soy35) + '" class="treeview-nodes">' + soy.$$escapeHtml(opt_data.elementContent) + '</ul>';
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(output);
-  };
-  if (goog.DEBUG) {
-    Templates.Treeview.__deltemplate_s34_97f15e76.soyTemplateName = 'Templates.Treeview.__deltemplate_s34_97f15e76';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Treeview.nodes'), 'element', 0, Templates.Treeview.__deltemplate_s34_97f15e76);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Treeview.__deltemplate_s41_9bb13687 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<li id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '-' + soy.$$escapeHtmlAttribute(opt_data.surfaceId) + '" class="treeview-node">' + soy.$$escapeHtml(opt_data.elementContent) + '</li>');
-  };
-  if (goog.DEBUG) {
-    Templates.Treeview.__deltemplate_s41_9bb13687.soyTemplateName = 'Templates.Treeview.__deltemplate_s41_9bb13687';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Treeview.node'), 'element', 0, Templates.Treeview.__deltemplate_s41_9bb13687);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Treeview.__deltemplate_s49_bcc6b7e7 = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Treeview'), 'element', true)({ elementClasses: opt_data.elementClasses, elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Treeview.content(opt_data, null, opt_ijData)), id: opt_data.id }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Treeview.__deltemplate_s49_bcc6b7e7.soyTemplateName = 'Templates.Treeview.__deltemplate_s49_bcc6b7e7';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Treeview'), '', 0, Templates.Treeview.__deltemplate_s49_bcc6b7e7);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Treeview.__deltemplate_s55_9da5f16b = function (opt_data, opt_ignored, opt_ijData) {
-    opt_data = opt_data || {};
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml('<div id="' + soy.$$escapeHtmlAttribute(opt_data.id) + '" class="treeview component' + soy.$$escapeHtmlAttribute(opt_data.elementClasses ? ' ' + opt_data.elementClasses : '') + '">' + soy.$$escapeHtml(opt_data.elementContent) + '</div>');
-  };
-  if (goog.DEBUG) {
-    Templates.Treeview.__deltemplate_s55_9da5f16b.soyTemplateName = 'Templates.Treeview.__deltemplate_s55_9da5f16b';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Treeview'), 'element', 0, Templates.Treeview.__deltemplate_s55_9da5f16b);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Treeview.__deltemplate_s63_91ba2bf6 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Treeview.nodes'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Treeview.nodes(opt_data, null, opt_ijData)), id: opt_data.id, surfaceId: opt_data.surfaceId }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Treeview.__deltemplate_s63_91ba2bf6.soyTemplateName = 'Templates.Treeview.__deltemplate_s63_91ba2bf6';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Treeview.nodes'), '', 0, Templates.Treeview.__deltemplate_s63_91ba2bf6);
-
-  /**
-   * @param {Object.<string, *>=} opt_data
-   * @param {(null|undefined)=} opt_ignored
-   * @param {Object.<string, *>=} opt_ijData
-   * @return {!soydata.SanitizedHtml}
-   * @suppress {checkTypes}
-   */
-  Templates.Treeview.__deltemplate_s69_23e29483 = function (opt_data, opt_ignored, opt_ijData) {
-    return soydata.VERY_UNSAFE.ordainSanitizedHtml(soy.$$getDelegateFn(soy.$$getDelTemplateId('Treeview.node'), 'element', true)({ elementContent: soydata.VERY_UNSAFE.$$ordainSanitizedHtmlForInternalBlocks('' + Templates.Treeview.node(opt_data, null, opt_ijData)), id: opt_data.id, surfaceId: opt_data.surfaceId }, null, opt_ijData));
-  };
-  if (goog.DEBUG) {
-    Templates.Treeview.__deltemplate_s69_23e29483.soyTemplateName = 'Templates.Treeview.__deltemplate_s69_23e29483';
-  }
-  soy.$$registerDelegateFn(soy.$$getDelTemplateId('Treeview.node'), '', 0, Templates.Treeview.__deltemplate_s69_23e29483);
-
+  Templates.Treeview.content.params = ['id', 'elementClasses'];
   Templates.Treeview.nodes.params = ['id', 'nodes'];
-  Templates.Treeview.node.params = ['id', 'node', 'surfaceId'];
   this.steel.Treeview = {};
 
   /* jshint ignore:end */
@@ -9798,13 +9388,14 @@ this.steelNamed = {};
   */
 
 	var Treeview = (function (_SoyComponent) {
+		babelHelpers.inherits(Treeview, _SoyComponent);
+
 		function Treeview(opt_config) {
 			babelHelpers.classCallCheck(this, Treeview);
 
 			babelHelpers.get(Object.getPrototypeOf(Treeview.prototype), 'constructor', this).call(this, opt_config);
 		}
 
-		babelHelpers.inherits(Treeview, _SoyComponent);
 		babelHelpers.createClass(Treeview, [{
 			key: 'attached',
 

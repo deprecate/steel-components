@@ -24,13 +24,13 @@ define(['exports', 'module', 'metal/src/events/EventHandle'], function (exports,
   */
 
 	var DomEventHandle = (function (_EventHandle) {
+		_inherits(DomEventHandle, _EventHandle);
+
 		function DomEventHandle(emitter, event, listener) {
 			_classCallCheck(this, DomEventHandle);
 
 			_get(Object.getPrototypeOf(DomEventHandle.prototype), 'constructor', this).call(this, emitter, event, listener);
 		}
-
-		_inherits(DomEventHandle, _EventHandle);
 
 		_createClass(DomEventHandle, [{
 			key: 'removeListener',

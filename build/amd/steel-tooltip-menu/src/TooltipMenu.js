@@ -22,6 +22,8 @@ define(['exports', 'module', 'metal/src/dom/dom', 'steel-tooltip/src/Tooltip', '
   */
 
 	var TooltipMenu = (function (_Tooltip) {
+		_inherits(TooltipMenu, _Tooltip);
+
 		/**
    * @inheritDoc
    */
@@ -31,8 +33,6 @@ define(['exports', 'module', 'metal/src/dom/dom', 'steel-tooltip/src/Tooltip', '
 
 			_get(Object.getPrototypeOf(TooltipMenu.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(TooltipMenu, _Tooltip);
 
 		_createClass(TooltipMenu, [{
 			key: 'attached',
@@ -72,6 +72,13 @@ define(['exports', 'module', 'metal/src/dom/dom', 'steel-tooltip/src/Tooltip', '
   * @static
   */
 	TooltipMenu.ELEMENT_CLASSES_MERGED = 'tooltip-menu component';
+
+	/**
+  * The tag name of the main element.
+  * @type {string}
+  * @static
+  */
+	TooltipMenu.ELEMENT_TAG_NAME = 'nav';
 
 	/**
   * TooltipMenu attrbutes definition.

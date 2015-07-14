@@ -1118,7 +1118,9 @@ define(['exports', 'metal/src/core'], function (exports, _metalSrcCore) {
    * @final
    */
   CancellablePromise.CancellationError = (function (_Error) {
-    var _class = function _class(opt_message) {
+    _inherits(_class, _Error);
+
+    function _class(opt_message) {
       _classCallCheck(this, _class);
 
       _get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, opt_message);
@@ -1126,9 +1128,7 @@ define(['exports', 'metal/src/core'], function (exports, _metalSrcCore) {
       if (opt_message) {
         this.message = opt_message;
       }
-    };
-
-    _inherits(_class, _Error);
+    }
 
     return _class;
   })(Error);

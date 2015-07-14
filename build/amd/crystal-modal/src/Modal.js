@@ -24,6 +24,8 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/c
   */
 
 	var Modal = (function (_SoyComponent) {
+		_inherits(Modal, _SoyComponent);
+
 		/**
    * @inheritDoc
    */
@@ -33,8 +35,6 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/c
 
 			_get(Object.getPrototypeOf(Modal.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(Modal, _SoyComponent);
 
 		_createClass(Modal, [{
 			key: 'disposeInternal',

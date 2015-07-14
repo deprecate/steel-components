@@ -28,6 +28,8 @@ define(['exports', 'module', 'steel-autocomplete/src/AutocompleteBase', 'metal/s
   */
 
 	var Autocomplete = (function (_AutocompleteBase) {
+		_inherits(Autocomplete, _AutocompleteBase);
+
 		/**
    * @inheritDoc
    */
@@ -37,8 +39,6 @@ define(['exports', 'module', 'steel-autocomplete/src/AutocompleteBase', 'metal/s
 
 			_get(Object.getPrototypeOf(Autocomplete.prototype), 'constructor', this).call(this, opt_config);
 		}
-
-		_inherits(Autocomplete, _AutocompleteBase);
 
 		_createClass(Autocomplete, [{
 			key: 'attached',

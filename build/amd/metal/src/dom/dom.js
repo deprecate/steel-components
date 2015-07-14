@@ -86,14 +86,22 @@ define(['exports', 'module', 'metal/src/core', 'metal/src/object/object', 'metal
     * child is a HTML string it will be automatically converted to a document
     * fragment before appending it to the parent.
     * @param {!Element} parent The node to append nodes to.
-    * @param {!Element|String} child The thing to append to the parent.
+    * @param {!(Element|NodeList|string)} child The thing to append to the parent.
     * @return {!Element} The appended child.
     */
 			value: function append(parent, child) {
 				if (_core['default'].isString(child)) {
 					child = dom.buildFragment(child);
 				}
-				return parent.appendChild(child);
+				if (child instanceof NodeList) {
+					var childArr = Array.prototype.slice.call(child);
+					for (var i = 0; i < childArr.length; i++) {
+						parent.appendChild(childArr[i]);
+					}
+				} else {
+					parent.appendChild(child);
+				}
+				return child;
 			}
 		}, {
 			key: 'buildFragment',

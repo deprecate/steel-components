@@ -16,6 +16,8 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
 	var _Disposable2 = _interopRequireDefault(_metalSrcDisposableDisposable);
 
 	var ComponentCollector = (function (_Disposable) {
+		_inherits(ComponentCollector, _Disposable);
+
 		function ComponentCollector() {
 			_classCallCheck(this, ComponentCollector);
 
@@ -27,8 +29,6 @@ define(['exports', 'module', 'metal/src/component/ComponentRegistry', 'metal/src
     */
 			this.nextComponentData_ = {};
 		}
-
-		_inherits(ComponentCollector, _Disposable);
 
 		_createClass(ComponentCollector, [{
 			key: 'addComponent',

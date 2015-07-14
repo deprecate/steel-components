@@ -21,6 +21,8 @@ define(['exports', 'module', 'metal/src/disposable/Disposable'], function (expor
   */
 
 	var EventHandler = (function (_Disposable) {
+		_inherits(EventHandler, _Disposable);
+
 		function EventHandler() {
 			_classCallCheck(this, EventHandler);
 
@@ -34,8 +36,6 @@ define(['exports', 'module', 'metal/src/disposable/Disposable'], function (expor
     */
 			this.eventHandles_ = [];
 		}
-
-		_inherits(EventHandler, _Disposable);
 
 		_createClass(EventHandler, [{
 			key: 'add',
