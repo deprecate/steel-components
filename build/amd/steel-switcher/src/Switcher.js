@@ -1,90 +1,111 @@
-define(['exports', 'module', 'metal/src/core', 'metal/src/dom/dom', 'metal/src/soy/SoyComponent', 'metal/src/component/ComponentRegistry', 'steel-switcher/src/Switcher.soy'], function (exports, module, _metalSrcCore, _metalSrcDomDom, _metalSrcSoySoyComponent, _metalSrcComponentComponentRegistry, _steelSwitcherSrcSwitcherSoy) {
-	'use strict';
+'use strict';
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+define(['exports', 'metal/src/core', 'metal/src/dom/dom', 'steel-switcher/src/Switcher.soy'], function (exports, _core, _dom, _Switcher) {
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	var _core2 = _interopRequireDefault(_core);
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	var _dom2 = _interopRequireDefault(_dom);
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+	var _Switcher2 = _interopRequireDefault(_Switcher);
 
-	var _core = _interopRequireDefault(_metalSrcCore);
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
 
-	var _dom = _interopRequireDefault(_metalSrcDomDom);
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
 
-	var _SoyComponent2 = _interopRequireDefault(_metalSrcSoySoyComponent);
+	var _createClass = (function () {
+		function defineProperties(target, props) {
+			for (var i = 0; i < props.length; i++) {
+				var descriptor = props[i];
+				descriptor.enumerable = descriptor.enumerable || false;
+				descriptor.configurable = true;
+				if ("value" in descriptor) descriptor.writable = true;
+				Object.defineProperty(target, descriptor.key, descriptor);
+			}
+		}
 
-	var _ComponentRegistry = _interopRequireDefault(_metalSrcComponentComponentRegistry);
+		return function (Constructor, protoProps, staticProps) {
+			if (protoProps) defineProperties(Constructor.prototype, protoProps);
+			if (staticProps) defineProperties(Constructor, staticProps);
+			return Constructor;
+		};
+	})();
 
-	/**
-  * Switcher component.
-  */
+	function _possibleConstructorReturn(self, call) {
+		if (!self) {
+			throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+		}
 
-	var Switcher = (function (_SoyComponent) {
-		_inherits(Switcher, _SoyComponent);
+		return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
 
-		function Switcher(opt_config) {
+	function _inherits(subClass, superClass) {
+		if (typeof superClass !== "function" && superClass !== null) {
+			throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+		}
+
+		subClass.prototype = Object.create(superClass && superClass.prototype, {
+			constructor: {
+				value: subClass,
+				enumerable: false,
+				writable: true,
+				configurable: true
+			}
+		});
+		if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+
+	var Switcher = (function (_SwitcherBase) {
+		_inherits(Switcher, _SwitcherBase);
+
+		function Switcher() {
 			_classCallCheck(this, Switcher);
 
-			_get(Object.getPrototypeOf(Switcher.prototype), 'constructor', this).call(this, opt_config);
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Switcher).apply(this, arguments));
 		}
 
 		_createClass(Switcher, [{
 			key: 'attached',
-
-			/**
-    * @inheritDoc
-    */
 			value: function attached() {
 				this.on('click', this.handleClick);
 			}
 		}, {
 			key: 'handleClick',
-
-			/**
-    * Handles switcher click.
-    */
 			value: function handleClick() {
 				this.checked = !this.checked;
 			}
 		}, {
 			key: 'syncChecked',
-
-			/**
-    * @inheritDoc
-    */
 			value: function syncChecked(checked) {
-				_dom['default'][checked ? 'addClasses' : 'removeClasses'](this.element, 'switcher-on');
+				_dom2.default[checked ? 'addClasses' : 'removeClasses'](this.element, 'switcher-on');
 			}
 		}]);
 
 		return Switcher;
-	})(_SoyComponent2['default']);
+	})(_Switcher2.default);
 
-	/**
-  * Default switcher elementClasses.
-  * @default list
-  * @type {String}
-  * @static
-  */
 	Switcher.ELEMENT_CLASSES = 'switcher';
-
-	/**
-  * Switcher attributes definition.
-  * @type {Object}
-  * @static
-  */
 	Switcher.ATTRS = {
 		checked: {
-			validator: _core['default'].isBoolean,
+			validator: _core2.default.isBoolean,
 			value: false
 		}
 	};
 
-	_ComponentRegistry['default'].register('Switcher', Switcher);
+	_Switcher2.default.setImpl(Switcher);
 
-	module.exports = Switcher;
+	exports.default = Switcher;
 });
+//# sourceMappingURL=Switcher.js.map

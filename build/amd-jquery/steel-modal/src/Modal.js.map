@@ -1,0 +1,1 @@
+{"version":3,"sources":["Modal.js"],"names":[],"mappings":"AAAA,YAAY,CAAC","file":"bower_components/steel-modal/src/Modal.js","sourcesContent":["'use strict';\n\nimport Modal from 'bower:crystal-modal/src/Modal';\n\nexport default Modal;\nimport JQueryAdapter from 'bower:metal-jquery-adapter/src/JQueryAdapter';JQueryAdapter.register('modal', Modal)"],"sourceRoot":"/source/"}
